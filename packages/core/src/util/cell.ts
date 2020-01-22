@@ -23,7 +23,6 @@
   THE SOFTWARE.
 */
 import isEmpty from 'lodash/isEmpty';
-import has from 'lodash/has';
 import union from 'lodash/union';
 import { getConfig, getData, getErrorAt, getSchema } from '../reducers';
 import {
@@ -33,7 +32,6 @@ import {
   OwnPropsOfControl,
   OwnPropsOfEnum,
   Resolve,
-  StatePropsOfCell,
   StatePropsOfScopedRenderer
 } from '.';
 import { DispatchPropsOfControl, mapDispatchToControlProps } from './renderer';
@@ -101,12 +99,14 @@ export const mapStateToCellProps = (
 ): StatePropsOfCell => {
   const { id, schema, path, uischema } = ownProps;
   const rootData = getData(state);
-  const visible = has(ownProps, 'visible')
-    ? ownProps.visible
-    : isVisible(uischema, rootData);
-  const enabled = has(ownProps, 'enabled')
-    ? ownProps.enabled
-    : isEnabled(uischema, rootData);
+  const visible =
+    ownProps.visible !== undefined
+      ? ownProps.visible
+      : isVisible(uischema, rootData);
+  const enabled =
+    ownProps.enabled !== undefined
+      ? ownProps.enabled
+      : isEnabled(uischema, rootData);
   const errors = formatErrorMessage(
     union(getErrorAt(path, schema)(state).map(error => error.message))
   );

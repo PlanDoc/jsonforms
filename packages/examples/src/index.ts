@@ -30,6 +30,7 @@ import * as array from './arrays';
 import * as nestedArray from './nestedArrays';
 import * as arrayWithDetail from './arrays-with-detail';
 import * as arrayWithDetailAndRule from './arrays-with-detail-and-rule';
+import * as arrayWithCustomChildLabel from './arrays-with-custom-element-label';
 import * as stringArray from './stringArray';
 import * as categorization from './categorization';
 import * as stepper from './stepper';
@@ -46,6 +47,7 @@ import * as generateUISchema from './generateUI';
 import * as layout from './layout';
 import * as person from './person';
 import * as rule from './rule';
+import * as ruleInheritance from './ruleInheritance';
 import * as resolve from './resolve';
 import * as config from './config';
 import * as text from './text';
@@ -79,6 +81,7 @@ export {
   nestedArray,
   arrayWithDetail,
   arrayWithDetailAndRule,
+  arrayWithCustomChildLabel,
   categorization,
   stepper,
   day1,
@@ -92,6 +95,7 @@ export {
   layout,
   person,
   rule,
+  ruleInheritance,
   dates,
   dyanmic,
   resolve,

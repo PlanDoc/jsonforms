@@ -39,7 +39,9 @@ import {
   JsonSchema,
   OwnPropsOfJsonFormsRenderer,
   removeId,
-  UISchemaElement
+  UISchemaElement,
+  JsonFormsCellRendererRegistryEntry,
+  Generate
 } from '@jsonforms/core';
 import {
   ctxToJsonFormsDispatchProps,
@@ -133,7 +135,7 @@ export class ResolvedJsonFormsDispatchRenderer extends React.Component<
     }
   }
   render() {
-    const { uischema, path, renderers } = this.props as JsonFormsProps;
+    const { uischema, path, enabled, renderers } = this.props as JsonFormsProps;
     const { resolving } = this.state;
     const _schema = this.state.resolvedSchema;
 
@@ -151,6 +153,7 @@ export class ResolvedJsonFormsDispatchRenderer extends React.Component<
           uischema={uischema}
           schema={_schema}
           path={path}
+          enabled={enabled}
           renderers={renderers}
           id={this.state.id}
         />
@@ -185,6 +188,7 @@ export const JsonFormsDispatch = React.memo(
         schema={props.schema || ctx.core.schema}
         uischema={props.uischema || ctx.core.uischema}
         path={props.path || ''}
+        enabled={props.enabled}
         rootSchema={ctx.core.schema}
         renderers={ctx.renderers}
         refResolver={refResolver}
@@ -195,9 +199,10 @@ export const JsonFormsDispatch = React.memo(
 
 export interface JsonFormsInitStateProps {
   data: any;
-  schema: JsonSchema;
-  uischema: UISchemaElement;
+  schema?: JsonSchema;
+  uischema?: UISchemaElement;
   renderers: JsonFormsRendererRegistryEntry[];
+  cells?: JsonFormsCellRendererRegistryEntry[];
   ajv?: AJV.Ajv;
   refParserOptions?: RefParser.Options;
 }
@@ -211,9 +216,13 @@ export const JsonForms = (
     schema,
     uischema,
     renderers,
+    cells,
     refParserOptions,
     onChange
   } = props;
+  const schemaToUse = schema !== undefined ? schema : Generate.jsonSchema(data);
+  const uischemaToUse =
+    typeof uischema === 'object' ? uischema : Generate.uiSchema(schemaToUse);
   return (
     <JsonFormsStateProvider
       initState={{
@@ -221,11 +230,11 @@ export const JsonForms = (
           ajv,
           data,
           refParserOptions,
-          schema,
-          uischema,
-          errors: [] // TODO
+          schema: schemaToUse,
+          uischema: uischemaToUse
         },
-        renderers
+        renderers,
+        cells
       }}
     >
       <JsonFormsDispatch onChange={onChange} />

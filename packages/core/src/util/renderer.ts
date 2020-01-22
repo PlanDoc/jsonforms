@@ -47,6 +47,8 @@ import {
   composeWithUi,
   createLabelDescriptionFrom,
   formatErrorMessage,
+  hasShowRule,
+  hasEnableRule,
   isEnabled,
   isVisible,
   moveDown,
@@ -54,7 +56,6 @@ import {
   Resolve,
   resolveSubSchemas
 } from '../util';
-import has from 'lodash/has';
 import { update } from '../actions';
 import { ErrorObject } from 'ajv';
 import { JsonFormsState } from '../store';
@@ -372,12 +373,14 @@ export const mapStateToControlProps = (
   const { uischema } = ownProps;
   const rootData = getData(state);
   const path = composeWithUi(uischema, ownProps.path);
-  const visible = has(ownProps, 'visible')
-    ? ownProps.visible
-    : isVisible(uischema, rootData, ownProps.path);
-  const enabled = has(ownProps, 'enabled')
-    ? ownProps.enabled
-    : isEnabled(uischema, rootData, ownProps.path);
+  const visible: boolean =
+    ownProps.visible === undefined || hasShowRule(uischema)
+      ? isVisible(uischema, rootData, ownProps.path)
+      : ownProps.visible;
+  const enabled: boolean =
+    ownProps.enabled === undefined || hasEnableRule(uischema)
+      ? isEnabled(uischema, rootData, ownProps.path)
+      : ownProps.enabled;
   const controlElement = uischema as ControlElement;
   const id = ownProps.id;
   const rootSchema = getSchema(state);
@@ -653,12 +656,15 @@ export const mapStateToLayoutProps = (
   ownProps: OwnPropsOfLayout
 ): LayoutProps => {
   const rootData = getData(state);
-  const visible: boolean = has(ownProps, 'visible')
-    ? ownProps.visible
-    : isVisible(ownProps.uischema, rootData, ownProps.path);
-  const enabled: boolean = has(ownProps, 'enabled')
-    ? ownProps.enabled
-    : isEnabled(ownProps.uischema, rootData, ownProps.path);
+  const { uischema } = ownProps;
+  const visible: boolean =
+    ownProps.visible === undefined || hasShowRule(uischema)
+      ? isVisible(ownProps.uischema, rootData, ownProps.path)
+      : ownProps.visible;
+  const enabled: boolean =
+    ownProps.enabled === undefined || hasEnableRule(uischema)
+      ? isEnabled(ownProps.uischema, rootData, ownProps.path)
+      : ownProps.enabled;
 
   const data = Resolve.data(rootData, ownProps.path);
 
@@ -746,9 +752,10 @@ const mapStateToCombinatorRendererProps = (
     uischema.scope,
     rootSchema
   );
-  const visible = has(ownProps, 'visible')
-    ? ownProps.visible
-    : isVisible(uischema, getData(state), ownProps.path);
+  const visible: boolean =
+    ownProps.visible === undefined || hasShowRule(uischema)
+      ? isVisible(uischema, getData(state), ownProps.path)
+      : ownProps.visible;
   const id = ownProps.id;
 
   const data = Resolve.data(getData(state), path);

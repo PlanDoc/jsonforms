@@ -1,12 +1,12 @@
 {
   "name": "@jsonforms/angular-test",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "private": true,
   "main": "./lib/index.js",
   "dependencies": {
-    "@jsonforms/angular": "^2.3.1",
-    "@jsonforms/core": "^2.3.1",
-    "redux": "^4.0.1"
+    "@jsonforms/angular": "^2.3.2",
+    "@jsonforms/core": "^2.3.2",
+    "redux": "^4.0.4"
   },
   "devDependencies": {
     "jasmine": "^3.2.0",

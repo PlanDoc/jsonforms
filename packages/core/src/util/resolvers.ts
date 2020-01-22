@@ -24,7 +24,6 @@
 */
 import isEmpty from 'lodash/isEmpty';
 import get from 'lodash/get';
-import has from 'lodash/has';
 import isArray from 'lodash/isArray';
 import isObject from 'lodash/isObject';
 import isFunction from 'lodash/isFunction';
@@ -103,17 +102,6 @@ export const findAllRefs = (
   }
   if (schema.$ref !== undefined) {
     result[schema.$ref] = schema;
-  }
-
-  // tslint:disable:no-string-literal
-  if (has(schema, 'links')) {
-    get(schema, 'links').forEach((link: { targetSchema: JsonSchema }) => {
-      if (!isEmpty(link.targetSchema.$ref)) {
-        result[link.targetSchema.$ref] = schema;
-      } else {
-        findAllRefs(link.targetSchema, result);
-      }
-    });
   }
 
   return result;

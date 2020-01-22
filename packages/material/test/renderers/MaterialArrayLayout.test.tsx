@@ -41,16 +41,19 @@ import {
 import Enzyme, { mount, ReactWrapper } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { JsonFormsReduxContext } from '@jsonforms/react';
+import { ExpansionPanel } from '@material-ui/core';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 const data = [
   {
     message: 'El Barto was here',
+    message2: 'El Barto was here 2',
     done: true
   },
   {
-    message: 'Yolo'
+    message: 'Yolo',
+    message2: 'Yolo 2'
   }
 ];
 const schema = {
@@ -106,6 +109,14 @@ const uischemaWithSortOption: ControlElement = {
   scope: '#',
   options: {
     showSortButtons: true
+  }
+};
+
+const uischemaWithChildLabelProp: ControlElement = {
+  type: 'Control',
+  scope: '#',
+  options: {
+    elementLabelProp: 'message2'
   }
 };
 
@@ -351,10 +362,12 @@ describe('Material array layout', () => {
     upButton.simulate('click');
     expect(store.getState().jsonforms.core.data).toEqual([
       {
-        message: 'Yolo'
+        message: 'Yolo',
+        message2: 'Yolo 2'
       },
       {
         message: 'El Barto was here',
+        message2: 'El Barto was here 2',
         done: true
       }
     ]);
@@ -381,10 +394,12 @@ describe('Material array layout', () => {
     upButton.simulate('click');
     expect(store.getState().jsonforms.core.data).toEqual([
       {
-        message: 'Yolo'
+        message: 'Yolo',
+        message2: 'Yolo 2'
       },
       {
         message: 'El Barto was here',
+        message2: 'El Barto was here 2',
         done: true
       }
     ]);
@@ -430,5 +445,51 @@ describe('Material array layout', () => {
       .find('button')
       .find({ 'aria-label': 'Move down' });
     expect(downButton.is('[disabled]')).toBe(true);
+  });
+
+  const getChildLabel = (wrapper: ReactWrapper, index: number) =>
+    wrapper
+      .find(
+        `#${
+          wrapper
+            .find(ExpansionPanel)
+            .at(index)
+            .props()['aria-labelledby']
+        }`
+      )
+      .text();
+
+  it('should render first simple property as child label', () => {
+    const store = initJsonFormsStore();
+    store.dispatch(Actions.init(data, schema, uischemaWithSortOption));
+    wrapper = mount(
+      <Provider store={store}>
+        <JsonFormsReduxContext>
+          <MaterialArrayLayout
+            schema={schema}
+            uischema={uischemaWithSortOption}
+          />
+        </JsonFormsReduxContext>
+      </Provider>
+    );
+    expect(getChildLabel(wrapper, 0)).toBe('El Barto was here');
+    expect(getChildLabel(wrapper, 1)).toBe('Yolo');
+  });
+
+  it('should render configured child label property as child label', () => {
+    const store = initJsonFormsStore();
+    store.dispatch(Actions.init(data, schema, uischemaWithChildLabelProp));
+    wrapper = mount(
+      <Provider store={store}>
+        <JsonFormsReduxContext>
+          <MaterialArrayLayout
+            schema={schema}
+            uischema={uischemaWithChildLabelProp}
+          />
+        </JsonFormsReduxContext>
+      </Provider>
+    );
+    expect(getChildLabel(wrapper, 0)).toBe('El Barto was here 2');
+    expect(getChildLabel(wrapper, 1)).toBe('Yolo 2');
   });
 });

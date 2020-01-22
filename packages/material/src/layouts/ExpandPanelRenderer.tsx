@@ -1,5 +1,6 @@
 import merge from 'lodash/merge';
-import React, { Fragment, Dispatch, ReducerAction } from 'react';
+import get from 'lodash/get';
+import React, { Dispatch, Fragment, ReducerAction, useState } from 'react';
 import { ComponentType } from 'enzyme';
 import {
   areEqual,
@@ -31,6 +32,7 @@ import Avatar from '@material-ui/core/Avatar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import uuid from 'uuid/v1';
 
 const iconStyle: any = { float: 'right' };
 
@@ -45,6 +47,7 @@ interface OwnPropsOfExpandPanel {
   enableMoveUp: boolean;
   enableMoveDown: boolean;
   config: any;
+  childLabelProp?: string;
   handleExpansion(panel: string): (event: any, expanded: boolean) => void;
 }
 
@@ -67,9 +70,11 @@ export interface DispatchPropsOfExpandPanel {
 
 export interface ExpandPanelProps
   extends StatePropsOfExpandPanel,
-  DispatchPropsOfExpandPanel { }
+    DispatchPropsOfExpandPanel {}
 
 const ExpandPanelRenderer = (props: ExpandPanelProps) => {
+  const [labelHtmlId] = useState(`id${uuid()}`);
+
   const {
     childLabel,
     childPath,
@@ -103,20 +108,24 @@ const ExpandPanelRenderer = (props: ExpandPanelProps) => {
   const appliedUiSchemaOptions = merge({}, config, uischema.options);
 
   return (
-    <ExpansionPanel expanded={expanded} onChange={handleExpansion(childPath)}>
+    <ExpansionPanel
+      aria-labelledby={labelHtmlId}
+      expanded={expanded}
+      onChange={handleExpansion(childPath)}
+    >
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Grid container alignItems={'center'}>
-          <Grid item xs={7} md={10}>
+          <Grid item xs={7} md={9}>
             <Grid container alignItems={'center'}>
               <Grid item xs={2} md={1}>
                 <Avatar aria-label='Index'>{index + 1}</Avatar>
               </Grid>
               <Grid item xs={10} md={11}>
-                {childLabel}
+                <span id={labelHtmlId}>{childLabel}</span>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={5} md={2}>
+          <Grid item xs={5} md={3}>
             <Grid container justify={'flex-end'}>
               <Grid item>
                 <Grid
@@ -149,8 +158,8 @@ const ExpandPanelRenderer = (props: ExpandPanelProps) => {
                       </Grid>
                     </Fragment>
                   ) : (
-                      ''
-                    )}
+                    ''
+                  )}
                   <Grid item>
                     <IconButton
                       onClick={removeItems(path, [index])}
@@ -220,6 +229,20 @@ export const ctxDispatchToExpandPanelProps: (
   }
 });
 
+const getFirstPrimitiveProp = (schema: any) => {
+  if (schema.properties) {
+    return find(Object.keys(schema.properties), propName => {
+      const prop = schema.properties[propName];
+      return (
+        prop.type === 'string' ||
+        prop.type === 'number' ||
+        prop.type === 'integer'
+      );
+    });
+  }
+  return undefined;
+};
+
 /**
  * Map state to control props.
  * @param state the JSON Forms state
@@ -232,32 +255,24 @@ export const withContextToExpandPanelProps = (
   ctx,
   props
 }: JsonFormsStateContext & ExpandPanelProps) => {
-    const dispatchProps = ctxDispatchToExpandPanelProps(ctx.dispatch);
-    const { schema, path, index, uischemas } = props;
-    const firstPrimitiveProp = schema.properties
-      ? find(Object.keys(schema.properties), propName => {
-        const prop = schema.properties[propName];
-        return (
-          prop.type === 'string' ||
-          prop.type === 'number' ||
-          prop.type === 'integer'
-        );
-      })
-      : undefined;
-    const childPath = composePaths(path, `${index}`);
-    const childData = Resolve.data(ctx.core.data, childPath);
-    const childLabel = firstPrimitiveProp ? childData[firstPrimitiveProp] : '';
+  const dispatchProps = ctxDispatchToExpandPanelProps(ctx.dispatch);
+  const { childLabelProp, schema, path, index, uischemas } = props;
+  const childPath = composePaths(path, `${index}`);
+  const childData = Resolve.data(ctx.core.data, childPath);
+  const childLabel = childLabelProp
+    ? get(childData, childLabelProp, '')
+    : get(childData, getFirstPrimitiveProp(schema), '');
 
-    return (
-      <Component
-        {...props}
-        {...dispatchProps}
-        childLabel={childLabel}
-        childPath={childPath}
-        uischemas={uischemas}
-      />
-    );
-  };
+  return (
+    <Component
+      {...props}
+      {...dispatchProps}
+      childLabel={childLabel}
+      childPath={childPath}
+      uischemas={uischemas}
+    />
+  );
+};
 
 export const withJsonFormsExpandPanelProps = (
   Component: ComponentType<ExpandPanelProps>
