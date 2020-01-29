@@ -376,15 +376,15 @@ const traverse = (
     return reduce(any, (acc, el) => acc || traverse(el, pred), false);
   }
 
-  if (pred(any)) {
+  if (pred((<any>any))) {
     return true;
   }
-  if (any.items) {
-    return traverse(any.items, pred);
+  if ((<any>any).items) {
+    return traverse((<any>any).items, pred);
   }
-  if (any.properties) {
+  if ((<any>any).properties) {
     return reduce(
-      toPairs(any.properties),
+      toPairs((<any>any).properties),
       (acc, [_key, val]) => acc || traverse(val, pred),
       false
     );
