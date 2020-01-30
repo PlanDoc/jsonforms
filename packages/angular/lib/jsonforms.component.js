@@ -51,7 +51,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 */
 var maxBy_1 = __importDefault(require("lodash/maxBy"));
 var core_1 = require("@angular/core");
-var core_2 = require("@jsonforms/core");
+var core_2 = require("jsonforms/packages/core");
 var store_1 = require("@angular-redux/store");
 require("rxjs/add/operator/map");
 var unknown_component_1 = require("./unknown.component");

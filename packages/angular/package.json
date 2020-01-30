@@ -43,7 +43,6 @@
     "@angular-redux/store": "^7.1.1",
     "@angular/core": "^5.2.10",
     "@angular/forms": "^5.2.10",
-    "@jsonforms/core": "2.2.0",
     "redux": "^3.0.0",
     "rxjs": "^5.5.7"
   },
@@ -51,7 +50,7 @@
     "@angular-redux/store": "^7.1.1",
     "@angular/core": "^5.2.10",
     "@angular/forms": "^5.2.10",
-    "@jsonforms/core": "2.2.0",
+    "jsonforms": "git+https://github.com/szamocza/jsonforms.git#ionic-v3",
     "copy-webpack-plugin": "^4.5.1",
     "redux": "^3.0.0",
     "rxjs": "^5.5.7",

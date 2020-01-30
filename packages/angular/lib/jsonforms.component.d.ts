@@ -1,5 +1,5 @@
 import { ComponentFactoryResolver, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
-import { JsonFormsState, OwnPropsOfRenderer, UISchemaElement } from '@jsonforms/core';
+import { JsonFormsState, OwnPropsOfRenderer, UISchemaElement } from 'jsonforms/packages/core';
 import { NgRedux } from '@angular-redux/store';
 import 'rxjs/add/operator/map';
 import { JsonFormsBaseRenderer } from './base.renderer';

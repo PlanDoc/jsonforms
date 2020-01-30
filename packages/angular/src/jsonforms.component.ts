@@ -42,7 +42,7 @@ import {
   mapStateToJsonFormsRendererProps,
   OwnPropsOfRenderer,
   UISchemaElement
-} from '@jsonforms/core';
+} from 'jsonforms/packages/core';
 import { NgRedux } from '@angular-redux/store';
 import 'rxjs/add/operator/map';
 import { UnknownRenderer } from './unknown.component';

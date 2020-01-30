@@ -1,4 +1,4 @@
-import { ControlElement, ControlProps, JsonFormsState, JsonSchema, OwnPropsOfControl } from '@jsonforms/core';
+import { ControlElement, ControlProps, JsonFormsState, JsonSchema, OwnPropsOfControl } from 'jsonforms/packages/core';
 import { OnDestroy, OnInit } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import { FormControl, ValidatorFn } from '@angular/forms';

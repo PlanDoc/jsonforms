@@ -11,7 +11,7 @@ import {
   mapStateToControlProps,
   OwnPropsOfControl,
   Resolve
-} from '@jsonforms/core';
+} from 'jsonforms/packages/core';
 import { Input, OnDestroy, OnInit } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import {
