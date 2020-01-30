@@ -331,7 +331,7 @@ export const mapStateToControlProps = (
   state: JsonFormsState,
   ownProps: OwnPropsOfControl
 ): StatePropsOfControl => {
-  const { uischema } = ownProps;
+  const { schema, uischema } = ownProps;
   const path = composeWithUi(uischema, ownProps.path);
   const visible = has(ownProps, 'visible')
     ? ownProps.visible
@@ -339,7 +339,7 @@ export const mapStateToControlProps = (
   const enabled = has(ownProps, 'enabled')
     ? ownProps.enabled
     : isEnabled(ownProps, state, ownProps.path);
-  const labelDesc = createLabelDescriptionFrom(uischema);
+  const labelDesc = createLabelDescriptionFrom(uischema, schema);
   const label = labelDesc.show ? labelDesc.text : '';
   const errors = union(getErrorAt(path)(state).map(error => error.message));
   const controlElement = uischema as ControlElement;

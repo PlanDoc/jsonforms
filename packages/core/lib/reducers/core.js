@@ -82,23 +82,23 @@ exports.coreReducer = function (state, action) {
             var thisAjv = getOrCreateAjv(state, action);
             var v = thisAjv.compile(action.schema);
             var e = sanitizeErrors(v, action.data);
-            return __assign(__assign({}, state), { data: action.data, schema: action.schema, uischema: action.uischema, errors: e, validator: v, ajv: thisAjv });
+            return __assign({}, state, { data: action.data, schema: action.schema, uischema: action.uischema, errors: e, validator: v, ajv: thisAjv });
         }
         case actions_1.SET_AJV: {
             var currentAjv = action.ajv;
             var validator = currentAjv.compile(state.schema);
             var errors = sanitizeErrors(validator, state.data);
-            return __assign(__assign({}, state), { validator: validator,
+            return __assign({}, state, { validator: validator,
                 errors: errors });
         }
         case actions_1.SET_SCHEMA: {
             var v = action.schema && state.ajv
                 ? state.ajv.compile(action.schema)
                 : state.validator;
-            return __assign(__assign({}, state), { validator: v, schema: action.schema });
+            return __assign({}, state, { validator: v, schema: action.schema });
         }
         case actions_1.SET_UISCHEMA: {
-            return __assign(__assign({}, state), { uischema: action.uischema });
+            return __assign({}, state, { uischema: action.uischema });
         }
         case actions_1.UPDATE_DATA: {
             if (action.path === undefined || action.path === null) {
@@ -108,10 +108,10 @@ exports.coreReducer = function (state, action) {
                 // empty path is ok
                 var result = action.updater(cloneDeep_1.default(state.data));
                 if (result === undefined || result === null) {
-                    return __assign(__assign({}, state), { data: state.data, uischema: state.uischema, schema: state.schema });
+                    return __assign({}, state, { data: state.data, uischema: state.uischema, schema: state.schema });
                 }
                 var errors = sanitizeErrors(state.validator, result);
-                return __assign(__assign({}, state), { data: result, errors: errors });
+                return __assign({}, state, { data: result, errors: errors });
             }
             else {
                 var oldData = get_1.default(state.data, action.path);
@@ -121,7 +121,7 @@ exports.coreReducer = function (state, action) {
                 }
                 var newState = set_1.default(cloneDeep_1.default(state.data), action.path, newData);
                 var errors = sanitizeErrors(state.validator, newState);
-                return __assign(__assign({}, state), { data: newState, errors: errors });
+                return __assign({}, state, { data: newState, errors: errors });
             }
         }
         default:

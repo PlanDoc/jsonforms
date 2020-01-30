@@ -13,8 +13,9 @@ import * as Test from './testers';
 export * from './testers';
 export { Test };
 import { ControlElement, LabelDescription } from './models/uischema';
+import { JsonSchema } from './models/jsonSchema';
 declare const Helpers: {
-    createLabelDescriptionFrom(withLabel: ControlElement): LabelDescription;
+    createLabelDescriptionFrom(withLabel: ControlElement, jsonSchema?: JsonSchema): LabelDescription;
     convertToValidClassName(s: string): string;
 };
 export { Helpers };

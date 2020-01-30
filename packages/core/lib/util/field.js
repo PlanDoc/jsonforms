@@ -85,7 +85,7 @@ exports.mapStateToFieldProps = function (state, ownProps) {
 };
 exports.mapStateToDispatchFieldProps = function (state, ownProps) {
     var props = exports.mapStateToFieldProps(state, ownProps);
-    return __assign(__assign(__assign({}, props), ownProps), { fields: state.jsonforms.fields || [] });
+    return __assign({}, props, ownProps, { fields: state.jsonforms.fields || [] });
 };
 /**
  * Default mapStateToFieldProps for enum field. Options is used for populating dropdown list
@@ -96,7 +96,7 @@ exports.mapStateToDispatchFieldProps = function (state, ownProps) {
 exports.defaultMapStateToEnumFieldProps = function (state, ownProps) {
     var props = exports.mapStateToFieldProps(state, ownProps);
     var options = ownProps.options !== undefined ? ownProps.options : props.scopedSchema.enum;
-    return __assign(__assign({}, props), { options: options });
+    return __assign({}, props, { options: options });
 };
 /**
  * Synonym for mapDispatchToControlProps.

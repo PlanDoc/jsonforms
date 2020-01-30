@@ -4,6 +4,7 @@ coverage
 dist
 lib
 !packages/angular/lib
+!packages/core/lib
 docs
 *.log
 

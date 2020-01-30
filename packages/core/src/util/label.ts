@@ -25,11 +25,15 @@
 import startCase from 'lodash/startCase';
 
 import { ControlElement, LabelDescription } from '../models/uischema';
+import {JsonSchema} from "..";
 
-const deriveLabel = (controlElement: ControlElement): string => {
+const deriveLabel = (controlElement: ControlElement, schema: JsonSchema): string => {
   if (controlElement.scope !== undefined) {
     const ref = controlElement.scope;
     const label = ref.substr(ref.lastIndexOf('/') + 1);
+    if(schema && schema.properties && schema.properties[label] && schema.properties[label].description) {
+      return schema.properties[label].description;
+    }
 
     return startCase(label);
   }
@@ -44,13 +48,15 @@ export const createCleanLabel = (label: string): string => {
 /**
  * Return a label object based on the given control element.
  * @param {ControlElement} withLabel the UI schema to obtain a label object for
+ * @param jsonSchema
  * @returns {LabelDescription}
  */
 export const createLabelDescriptionFrom = (
-  withLabel: ControlElement
+  withLabel: ControlElement,
+  jsonSchema?: JsonSchema
 ): LabelDescription => {
   const labelProperty = withLabel.label;
-  const derivedLabel = deriveLabel(withLabel);
+  const derivedLabel = deriveLabel(withLabel, jsonSchema);
   if (typeof labelProperty === 'boolean') {
     if (labelProperty) {
       return {

@@ -46,11 +46,11 @@ exports.i18nReducer = function (state, action) {
     if (state === void 0) { state = initState; }
     switch (action.type) {
         case actions_1.SET_LOCALIZED_SCHEMAS:
-            return __assign(__assign({}, state), { localizedSchemas: action.localizedSchemas });
+            return __assign({}, state, { localizedSchemas: action.localizedSchemas });
         case __1.SET_LOCALIZED_UISCHEMAS:
-            return __assign(__assign({}, state), { localizedUISchemas: action.localizedUISchemas });
+            return __assign({}, state, { localizedUISchemas: action.localizedUISchemas });
         case actions_1.SET_LOCALE:
-            return __assign(__assign({}, state), { locale: action.locale === undefined ? navigator.languages[0] : action.locale });
+            return __assign({}, state, { locale: action.locale === undefined ? navigator.languages[0] : action.locale });
         default:
             return state;
     }

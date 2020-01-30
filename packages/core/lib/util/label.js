@@ -28,10 +28,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
   THE SOFTWARE.
 */
 var startCase_1 = __importDefault(require("lodash/startCase"));
-var deriveLabel = function (controlElement) {
+var deriveLabel = function (controlElement, schema) {
     if (controlElement.scope !== undefined) {
         var ref = controlElement.scope;
         var label = ref.substr(ref.lastIndexOf('/') + 1);
+        if (schema && schema.properties && schema.properties[label] && schema.properties[label].description) {
+            return schema.properties[label].description;
+        }
         return startCase_1.default(label);
     }
     return '';
@@ -42,11 +45,12 @@ exports.createCleanLabel = function (label) {
 /**
  * Return a label object based on the given control element.
  * @param {ControlElement} withLabel the UI schema to obtain a label object for
+ * @param jsonSchema
  * @returns {LabelDescription}
  */
-exports.createLabelDescriptionFrom = function (withLabel) {
+exports.createLabelDescriptionFrom = function (withLabel, jsonSchema) {
     var labelProperty = withLabel.label;
-    var derivedLabel = deriveLabel(withLabel);
+    var derivedLabel = deriveLabel(withLabel, jsonSchema);
     if (typeof labelProperty === 'boolean') {
         if (labelProperty) {
             return {

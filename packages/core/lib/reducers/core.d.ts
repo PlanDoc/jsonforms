@@ -12,8 +12,8 @@ export interface JsonFormsCore {
 declare type ValidCoreActions = InitAction | UpdateAction | SetAjvAction | SetSchemaAction | SetUISchemaAction;
 export declare const coreReducer: (state: JsonFormsCore, action: ValidCoreActions) => JsonFormsCore;
 export declare const extractData: (state: JsonFormsCore) => any;
-export declare const extractSchema: (state: JsonFormsCore) => any;
-export declare const extractUiSchema: (state: JsonFormsCore) => any;
+export declare const extractSchema: (state: JsonFormsCore) => JsonSchema;
+export declare const extractUiSchema: (state: JsonFormsCore) => UISchemaElement;
 export declare const errorAt: (instancePath: string) => (state: JsonFormsCore) => any[];
 export declare const subErrorsAt: (instancePath: string) => (state: JsonFormsCore) => any[];
 export {};

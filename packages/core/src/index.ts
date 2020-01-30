@@ -42,9 +42,10 @@ export { Test };
 
 import { convertToValidClassName, createLabelDescriptionFrom } from './util';
 import { ControlElement, LabelDescription } from './models/uischema';
+import { JsonSchema } from './models/jsonSchema';
 
 const Helpers: {
-  createLabelDescriptionFrom(withLabel: ControlElement): LabelDescription;
+  createLabelDescriptionFrom(withLabel: ControlElement, jsonSchema?: JsonSchema): LabelDescription;
   convertToValidClassName(s: string): string;
 } = {
   createLabelDescriptionFrom,

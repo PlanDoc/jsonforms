@@ -6,5 +6,5 @@ export interface JsonFormsFieldRendererRegistryEntry {
     tester: RankedTester;
     field: any;
 }
-export declare const fieldReducer: (state: JsonFormsFieldRendererRegistryState, { type, tester, field }: ValidFieldReducerActions) => JsonFormsFieldRendererRegistryState;
+export declare const fieldReducer: (state: JsonFormsFieldRendererRegistryEntry[], { type, tester, field }: ValidFieldReducerActions) => JsonFormsFieldRendererRegistryEntry[];
 export {};

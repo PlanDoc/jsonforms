@@ -15,10 +15,8 @@ var __rest = (this && this.__rest) || function (s, e) {
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
     return t;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
@@ -130,7 +128,7 @@ exports.isDescriptionHidden = function (visible, description, isFocused) {
  * @returns {StatePropsOfControl} state props for a control
  */
 exports.mapStateToControlProps = function (state, ownProps) {
-    var uischema = ownProps.uischema;
+    var schema = ownProps.schema, uischema = ownProps.uischema;
     var path = util_1.composeWithUi(uischema, ownProps.path);
     var visible = has_1.default(ownProps, 'visible')
         ? ownProps.visible
@@ -138,7 +136,7 @@ exports.mapStateToControlProps = function (state, ownProps) {
     var enabled = has_1.default(ownProps, 'enabled')
         ? ownProps.enabled
         : util_1.isEnabled(ownProps, state, ownProps.path);
-    var labelDesc = util_1.createLabelDescriptionFrom(uischema);
+    var labelDesc = util_1.createLabelDescriptionFrom(uischema, schema);
     var label = labelDesc.show ? labelDesc.text : '';
     var errors = union_1.default(reducers_1.getErrorAt(path)(state).map(function (error) { return error.message; }));
     var controlElement = uischema;
@@ -192,7 +190,7 @@ exports.mapStateToArrayControlProps = function (state, ownProps) {
     var controlElement = uischema;
     var resolvedSchema = util_1.Resolve.schema(schema, controlElement.scope + '/items');
     var childErrors = reducers_1.getSubErrorsAt(path)(state);
-    return __assign(__assign({}, props), { path: path,
+    return __assign({}, props, { path: path,
         schema: schema,
         uischema: uischema, scopedSchema: resolvedSchema, childErrors: childErrors });
 };
