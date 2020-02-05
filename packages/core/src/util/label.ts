@@ -70,8 +70,16 @@ export const createLabelDescriptionFrom = (
       };
     }
   } else if (typeof labelProperty === 'string') {
+    let canUseDescriptionForLabel = false;
+    if (withLabel.scope !== undefined) {
+      const ref = withLabel.scope;
+      const refLabel = ref.substr(ref.lastIndexOf('/') + 1);
+      if(jsonSchema && jsonSchema.properties && jsonSchema.properties[refLabel] && jsonSchema.properties[refLabel].description) {
+        canUseDescriptionForLabel = true;
+      }
+    }
     return {
-      text: labelProperty as string,
+      text: canUseDescriptionForLabel ? derivedLabel : (labelProperty as string),
       show: true
     };
   } else if (typeof labelProperty === 'object') {

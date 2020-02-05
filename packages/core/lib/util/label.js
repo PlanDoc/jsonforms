@@ -66,8 +66,16 @@ exports.createLabelDescriptionFrom = function (withLabel, jsonSchema) {
         }
     }
     else if (typeof labelProperty === 'string') {
+        var canUseDescriptionForLabel = false;
+        if (withLabel.scope !== undefined) {
+            var ref = withLabel.scope;
+            var refLabel = ref.substr(ref.lastIndexOf('/') + 1);
+            if (jsonSchema && jsonSchema.properties && jsonSchema.properties[refLabel] && jsonSchema.properties[refLabel].description) {
+                canUseDescriptionForLabel = true;
+            }
+        }
         return {
-            text: labelProperty,
+            text: canUseDescriptionForLabel ? derivedLabel : labelProperty,
             show: true
         };
     }
