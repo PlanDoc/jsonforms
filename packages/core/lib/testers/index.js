@@ -216,7 +216,7 @@ exports.withIncreasedRank = function (by, rankedTester) { return function (uisch
  */
 exports.isBooleanControl = exports.and(exports.uiTypeIs('Control'), exports.schemaTypeIs('boolean'));
 // TODO: rather check for properties property
-exports.isObjectControl = exports.and(exports.uiTypeIs('Control'), exports.schemaTypeIs('object'));
+exports.isObjectControl = exports.and(exports.uiTypeIs('Control'), exports.or(exports.schemaTypeIs('object'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('properties'); })));
 exports.isAllOfControl = exports.and(exports.uiTypeIs('Control'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('allOf'); }));
 exports.isAnyOfControl = exports.and(exports.uiTypeIs('Control'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('anyOf'); }));
 exports.isOneOfControl = exports.and(exports.uiTypeIs('Control'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('oneOf'); }));
@@ -279,7 +279,7 @@ exports.isObjectArrayControl = exports.and(exports.uiTypeIs('Control'), exports.
         !isEmpty_1.default(schema.items) &&
         !Array.isArray(schema.items);
 } // we don't care about tuples
-), exports.schemaSubPathMatches('items', function (schema) { return schema.type === 'object'; }));
+), exports.schemaSubPathMatches('items', function (schema) { return (schema.type === 'object' || schema.hasOwnProperty('properties')); }));
 var traverse = function (any, pred) {
     if (isArray_1.default(any)) {
         return reduce_1.default(any, function (acc, el) { return acc || traverse(el, pred); }, false);

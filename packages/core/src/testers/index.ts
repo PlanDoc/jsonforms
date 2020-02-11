@@ -265,8 +265,12 @@ export const isBooleanControl = and(
   schemaTypeIs('boolean')
 );
 
-// TODO: rather check for properties property
-export const isObjectControl = and(uiTypeIs('Control'), schemaTypeIs('object'));
+export const isObjectControl = and(uiTypeIs('Control'),
+    or(
+      schemaTypeIs('object'),
+      schemaMatches(schema => schema.hasOwnProperty('properties'))
+    )
+);
 
 export const isAllOfControl = and(
   uiTypeIs('Control'),
@@ -365,7 +369,7 @@ export const isObjectArrayControl = and(
       !isEmpty(schema.items) &&
       !Array.isArray(schema.items) // we don't care about tuples
   ),
-  schemaSubPathMatches('items', schema => schema.type === 'object')
+  schemaSubPathMatches('items', schema => (schema.type === 'object' || schema.hasOwnProperty('properties')))
 );
 
 const traverse = (
