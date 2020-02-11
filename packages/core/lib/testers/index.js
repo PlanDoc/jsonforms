@@ -215,7 +215,6 @@ exports.withIncreasedRank = function (by, rankedTester) { return function (uisch
  * @type {RankedTester}
  */
 exports.isBooleanControl = exports.and(exports.uiTypeIs('Control'), exports.schemaTypeIs('boolean'));
-// TODO: rather check for properties property
 exports.isObjectControl = exports.and(exports.uiTypeIs('Control'), exports.or(exports.schemaTypeIs('object'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('properties'); })));
 exports.isAllOfControl = exports.and(exports.uiTypeIs('Control'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('allOf'); }));
 exports.isAnyOfControl = exports.and(exports.uiTypeIs('Control'), exports.schemaMatches(function (schema) { return schema.hasOwnProperty('anyOf'); }));
