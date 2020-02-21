@@ -27,6 +27,7 @@ import { JsonFormsCore } from './reducers/core';
 import { JsonFormsFieldRendererRegistryEntry } from './reducers/fields';
 import { JsonFormsRendererRegistryEntry } from './reducers/renderers';
 import { JsonFormsLocaleState } from './reducers/i18n';
+import {JsonFormsOffFilterRegistryEntry} from "./reducers/off-filter";
 
 /**
  * JSONForms store.
@@ -64,6 +65,12 @@ export interface JsonFormsSubStates {
    *
    */
   i18n?: JsonFormsLocaleState;
+
+  /**
+   * All filtered path
+   */
+  offFilter?: JsonFormsOffFilterRegistryEntry;
+
   // allow additional state
   [additionalState: string]: any;
 }

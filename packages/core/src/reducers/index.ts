@@ -53,6 +53,7 @@ import {
   findLocalizedUISchema,
   i18nReducer
 } from './i18n';
+import {extractOffFilter, JsonFormsOffFilterRegistryEntry, offFilterReducer} from "./off-filter";
 
 export { rendererReducer, fieldReducer, coreReducer, UISchemaTester };
 
@@ -66,6 +67,7 @@ export const jsonformsReducer = (
     config: configReducer,
     uischemas: uischemaRegistryReducer,
     defaultData: defaultDataReducer,
+    offFilter: offFilterReducer,
     i18n: i18nReducer,
     ...additionalReducers
   });
@@ -80,6 +82,10 @@ export const getDefaultData = (
   state: JsonFormsState
 ): JsonFormsDefaultDataRegistryEntry[] =>
   extractDefaultData(get(state, 'jsonforms.defaultData'));
+export const getOffFilter = (
+    state: JsonFormsState
+): JsonFormsOffFilterRegistryEntry =>
+    extractOffFilter(get(state, 'jsonforms.offFilter'));
 export const getRenderers = (
   state: JsonFormsState
 ): JsonFormsRendererRegistryEntry[] => get(state, 'jsonforms.renderers');

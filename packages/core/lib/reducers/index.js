@@ -51,9 +51,10 @@ exports.coreReducer = core_1.coreReducer;
 var uischemas_1 = require("./uischemas");
 var __1 = require("..");
 var i18n_1 = require("./i18n");
+var off_filter_1 = require("./off-filter");
 exports.jsonformsReducer = function (additionalReducers) {
     if (additionalReducers === void 0) { additionalReducers = {}; }
-    return redux_1.combineReducers(__assign({ core: core_1.coreReducer, renderers: renderers_1.rendererReducer, fields: fields_1.fieldReducer, config: config_1.configReducer, uischemas: uischemas_1.uischemaRegistryReducer, defaultData: default_data_1.defaultDataReducer, i18n: i18n_1.i18nReducer }, additionalReducers));
+    return redux_1.combineReducers(__assign({ core: core_1.coreReducer, renderers: renderers_1.rendererReducer, fields: fields_1.fieldReducer, config: config_1.configReducer, uischemas: uischemas_1.uischemaRegistryReducer, defaultData: default_data_1.defaultDataReducer, offFilter: off_filter_1.offFilterReducer, i18n: i18n_1.i18nReducer }, additionalReducers));
 };
 exports.getData = function (state) {
     return core_1.extractData(get_1.default(state, 'jsonforms.core'));
@@ -66,6 +67,9 @@ exports.getUiSchema = function (state) {
 };
 exports.getDefaultData = function (state) {
     return default_data_1.extractDefaultData(get_1.default(state, 'jsonforms.defaultData'));
+};
+exports.getOffFilter = function (state) {
+    return off_filter_1.extractOffFilter(get_1.default(state, 'jsonforms.offFilter'));
 };
 exports.getRenderers = function (state) { return get_1.default(state, 'jsonforms.renderers'); };
 exports.findUISchema = function (state) { return function (schema, schemaPath, path, fallbackLayoutType, control) {
