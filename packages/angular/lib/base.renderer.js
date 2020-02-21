@@ -34,8 +34,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
   THE SOFTWARE.
 */
 var core_1 = require("@angular/core");
+var core_2 = require("jsonforms/packages/core");
 var JsonFormsBaseRenderer = /** @class */ (function () {
-    function JsonFormsBaseRenderer() {
+    function JsonFormsBaseRenderer(ngRedux) {
+        this.filterMode = false;
+        this.filterOn = true;
+        this.redux = ngRedux;
+        if (ngRedux && ngRedux.getState) {
+            var state = ngRedux.getState();
+            this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+                state.jsonforms.core.uischema['filterMode'];
+        }
     }
     JsonFormsBaseRenderer.prototype.getOwnProps = function () {
         return {
@@ -43,6 +52,28 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
             schema: this.schema,
             path: this.path
         };
+    };
+    JsonFormsBaseRenderer.prototype.toggleFilterMode = function (uischema, changeFilter) {
+        if (changeFilter === void 0) { changeFilter = true; }
+        if (this.filterMode) {
+            if (changeFilter)
+                this.filterOn = !this.filterOn;
+            if (uischema) {
+                if (uischema.scope) {
+                    if (!this.filterOn) {
+                        this.redux.dispatch(core_2.addOffFilter(core_2.toDataPath(uischema.scope)));
+                    }
+                    else {
+                        this.redux.dispatch(core_2.removeOffFilter(core_2.toDataPath(uischema.scope)));
+                    }
+                }
+                else if (uischema.elements) {
+                    for (var i = 0; i < uischema.elements.length; i++) {
+                        this.toggleFilterMode(uischema.elements[i], false);
+                    }
+                }
+            }
+        }
     };
     __decorate([
         core_1.Input(),

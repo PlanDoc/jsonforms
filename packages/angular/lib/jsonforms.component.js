@@ -60,7 +60,7 @@ var control_1 = require("./control");
 var JsonFormsOutlet = /** @class */ (function (_super) {
     __extends(JsonFormsOutlet, _super);
     function JsonFormsOutlet(viewContainerRef, componentFactoryResolver, ngRedux) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, ngRedux) || this;
         _this.viewContainerRef = viewContainerRef;
         _this.componentFactoryResolver = componentFactoryResolver;
         _this.ngRedux = ngRedux;

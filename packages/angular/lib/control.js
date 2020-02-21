@@ -40,7 +40,7 @@ var base_renderer_1 = require("./base.renderer");
 var JsonFormsControl = /** @class */ (function (_super) {
     __extends(JsonFormsControl, _super);
     function JsonFormsControl(ngRedux) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, ngRedux) || this;
         _this.ngRedux = ngRedux;
         _this.getEventValue = function (event) { return event.value; };
         _this.validator = function (_c) {

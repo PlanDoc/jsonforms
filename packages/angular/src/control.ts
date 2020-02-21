@@ -41,7 +41,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
   hidden: boolean;
 
   constructor(protected ngRedux: NgRedux<JsonFormsState>) {
-    super();
+    super(ngRedux);
     this.form = new FormControl(
       {
         value: '',

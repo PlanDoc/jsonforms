@@ -63,7 +63,7 @@ export class JsonFormsOutlet extends JsonFormsBaseRenderer<UISchemaElement>
     private componentFactoryResolver: ComponentFactoryResolver,
     private ngRedux: NgRedux<any>
   ) {
-    super();
+    super(ngRedux);
   }
 
   @Input()

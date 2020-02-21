@@ -24,15 +24,21 @@
 */
 import { Input } from '@angular/core';
 import {
+  addOffFilter, JsonFormsState,
   JsonSchema,
-  OwnPropsOfRenderer,
+  OwnPropsOfRenderer, removeOffFilter, toDataPath,
   UISchemaElement
 } from 'jsonforms/packages/core';
+import {NgRedux} from "@angular-redux/store";
 
 export class JsonFormsBaseRenderer<T extends UISchemaElement> {
   @Input() uischema: T;
   @Input() schema: JsonSchema;
   @Input() path: string;
+
+  private redux: NgRedux<JsonFormsState>;
+  filterMode: boolean = false;
+  filterOn: boolean = true;
 
   protected getOwnProps(): OwnPropsOfRenderer {
     return {
@@ -41,4 +47,34 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
       path: this.path
     };
   }
+
+  constructor(ngRedux: NgRedux<JsonFormsState>) {
+    this.redux = ngRedux;
+    if(ngRedux && ngRedux.getState) {
+      let state = ngRedux.getState();
+      this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+          (<any>state.jsonforms.core.uischema)['filterMode'];
+    }
+  }
+
+  toggleFilterMode(uischema: any, changeFilter: boolean = true) {
+    if(this.filterMode) {
+      if(changeFilter) this.filterOn = !this.filterOn;
+
+      if(uischema) {
+        if(uischema.scope) {
+          if(!this.filterOn) {
+            this.redux.dispatch(addOffFilter(toDataPath(uischema.scope)));
+          } else {
+            this.redux.dispatch(removeOffFilter(toDataPath(uischema.scope)));
+          }
+        } else if(uischema.elements) {
+          for(let i = 0; i < uischema.elements.length; i++) {
+            this.toggleFilterMode(uischema.elements[i], false);
+          }
+        }
+      }
+    }
+  }
+
 }
