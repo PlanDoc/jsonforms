@@ -59,12 +59,15 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
             if (changeFilter)
                 this.filterOn = !this.filterOn;
             if (uischema) {
+                var absPath = this.path || "";
+                var scopedPath = core_2.toDataPath(uischema.scope) || "";
+                var filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
                 if (uischema.scope) {
                     if (this.filterOn) {
-                        this.redux.dispatch(core_2.addFilter(core_2.toDataPath(uischema.scope)));
+                        this.redux.dispatch(core_2.addFilter(filterPath));
                     }
                     else {
-                        this.redux.dispatch(core_2.removeFilter(core_2.toDataPath(uischema.scope)));
+                        this.redux.dispatch(core_2.removeFilter(filterPath));
                     }
                 }
                 else if (uischema.elements) {

@@ -63,11 +63,15 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
       if(changeFilter) this.filterOn = !this.filterOn;
 
       if(uischema) {
+        let absPath = this.path || "";
+        let scopedPath = toDataPath(uischema.scope) || "";
+        let filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
+
         if(uischema.scope) {
           if(this.filterOn) {
-            this.redux.dispatch(addFilter(toDataPath(uischema.scope)));
+            this.redux.dispatch(addFilter(filterPath));
           } else {
-            this.redux.dispatch(removeFilter(toDataPath(uischema.scope)));
+            this.redux.dispatch(removeFilter(filterPath));
           }
         } else if(uischema.elements) {
           for(let i = 0; i < uischema.elements.length; i++) {
