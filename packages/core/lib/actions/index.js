@@ -19,8 +19,8 @@ exports.SET_LOCALIZED_SCHEMAS = 'jsonforms/SET_LOCALIZED_SCHEMAS';
 exports.SET_LOCALIZED_UISCHEMAS = 'jsonforms/SET_LOCALIZED_UISCHEMAS';
 exports.ADD_DEFAULT_DATA = "jsonforms/ADD_DEFAULT_DATA";
 exports.REMOVE_DEFAULT_DATA = "jsonforms/REMOVE_DEFAULT_DATA";
-exports.ADD_OFF_FILTER = "jsonforms/ADD_OFF_FILTER";
-exports.REMOVE_OFF_FILTER = "jsonforms/REMOVE_OFF_FILTER";
+exports.ADD_FILTER = "jsonforms/ADD_FILTER";
+exports.REMOVE_FILTER = "jsonforms/REMOVE_FILTER";
 exports.init = function (data, schema, uischema, ajv) {
     if (schema === void 0) { schema = generators_1.generateJsonSchema(data); }
     if (uischema === void 0) { uischema = generators_1.generateDefaultUISchema(schema); }
@@ -41,12 +41,12 @@ exports.unregisterDefaultData = function (schemaPath) { return ({
     type: exports.REMOVE_DEFAULT_DATA,
     schemaPath: schemaPath
 }); };
-exports.addOffFilter = function (filterName) { return ({
-    type: exports.ADD_OFF_FILTER,
+exports.addFilter = function (filterName) { return ({
+    type: exports.ADD_FILTER,
     filterName: filterName
 }); };
-exports.removeOffFilter = function (filterName) { return ({
-    type: exports.REMOVE_OFF_FILTER,
+exports.removeFilter = function (filterName) { return ({
+    type: exports.REMOVE_FILTER,
     filterName: filterName
 }); };
 exports.setAjv = function (ajv) { return ({

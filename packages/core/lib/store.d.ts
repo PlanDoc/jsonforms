@@ -3,7 +3,7 @@ import { JsonFormsCore } from './reducers/core';
 import { JsonFormsFieldRendererRegistryEntry } from './reducers/fields';
 import { JsonFormsRendererRegistryEntry } from './reducers/renderers';
 import { JsonFormsLocaleState } from './reducers/i18n';
-import { JsonFormsOffFilterRegistryEntry } from "./reducers/off-filter";
+import { JsonFormsFilterRegistryEntry } from "./reducers/filter";
 /**
  * JSONForms store.
  */
@@ -42,7 +42,7 @@ export interface JsonFormsSubStates {
     /**
      * All filtered path
      */
-    offFilter?: JsonFormsOffFilterRegistryEntry;
+    filter?: JsonFormsFilterRegistryEntry;
     [additionalState: string]: any;
 }
 export interface JsonFormsExtendedState<T> extends JsonFormsState {

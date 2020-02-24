@@ -21,8 +21,8 @@ export declare const SET_LOCALIZED_SCHEMAS: 'jsonforms/SET_LOCALIZED_SCHEMAS';
 export declare const SET_LOCALIZED_UISCHEMAS: 'jsonforms/SET_LOCALIZED_UISCHEMAS';
 export declare const ADD_DEFAULT_DATA: 'jsonforms/ADD_DEFAULT_DATA';
 export declare const REMOVE_DEFAULT_DATA: 'jsonforms/REMOVE_DEFAULT_DATA';
-export declare const ADD_OFF_FILTER: 'jsonforms/ADD_OFF_FILTER';
-export declare const REMOVE_OFF_FILTER: 'jsonforms/REMOVE_OFF_FILTER';
+export declare const ADD_FILTER: 'jsonforms/ADD_FILTER';
+export declare const REMOVE_FILTER: 'jsonforms/REMOVE_FILTER';
 export interface UpdateAction {
     type: 'jsonforms/UPDATE';
     path: string;
@@ -60,20 +60,20 @@ export declare const unregisterDefaultData: (schemaPath: string) => {
     type: "jsonforms/REMOVE_DEFAULT_DATA";
     schemaPath: string;
 };
-export interface AddOffFilterAction {
-    type: 'jsonforms/ADD_OFF_FILTER';
+export interface AddFilterAction {
+    type: 'jsonforms/ADD_FILTER';
     filterName: string;
 }
-export declare const addOffFilter: (filterName: string) => {
-    type: "jsonforms/ADD_OFF_FILTER";
+export declare const addFilter: (filterName: string) => {
+    type: "jsonforms/ADD_FILTER";
     filterName: string;
 };
-export interface RemoveOffFilterAction {
-    type: 'jsonforms/REMOVE_OFF_FILTER';
+export interface RemoveFilterAction {
+    type: 'jsonforms/REMOVE_FILTER';
     filterName: string;
 }
-export declare const removeOffFilter: (filterName: string) => {
-    type: "jsonforms/REMOVE_OFF_FILTER";
+export declare const removeFilter: (filterName: string) => {
+    type: "jsonforms/REMOVE_FILTER";
     filterName: string;
 };
 export interface SetAjvAction {
