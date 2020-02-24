@@ -24,10 +24,11 @@
 */
 import { Input } from '@angular/core';
 import {
-  addOffFilter, JsonFormsState,
+  JsonFormsState,
   JsonSchema,
-  OwnPropsOfRenderer, removeOffFilter, toDataPath,
-  UISchemaElement
+  OwnPropsOfRenderer, toDataPath,
+  UISchemaElement,
+  addFilter, removeFilter
 } from 'jsonforms/packages/core';
 import {NgRedux} from "@angular-redux/store";
 
@@ -38,7 +39,7 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
 
   private redux: NgRedux<JsonFormsState>;
   filterMode: boolean = false;
-  filterOn: boolean = true;
+  filterOn: boolean = false;
 
   protected getOwnProps(): OwnPropsOfRenderer {
     return {
@@ -63,10 +64,10 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
 
       if(uischema) {
         if(uischema.scope) {
-          if(!this.filterOn) {
-            this.redux.dispatch(addOffFilter(toDataPath(uischema.scope)));
+          if(this.filterOn) {
+            this.redux.dispatch(addFilter(toDataPath(uischema.scope)));
           } else {
-            this.redux.dispatch(removeOffFilter(toDataPath(uischema.scope)));
+            this.redux.dispatch(removeFilter(toDataPath(uischema.scope)));
           }
         } else if(uischema.elements) {
           for(let i = 0; i < uischema.elements.length; i++) {

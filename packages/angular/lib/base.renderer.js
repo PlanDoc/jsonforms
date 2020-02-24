@@ -38,7 +38,7 @@ var core_2 = require("jsonforms/packages/core");
 var JsonFormsBaseRenderer = /** @class */ (function () {
     function JsonFormsBaseRenderer(ngRedux) {
         this.filterMode = false;
-        this.filterOn = true;
+        this.filterOn = false;
         this.redux = ngRedux;
         if (ngRedux && ngRedux.getState) {
             var state = ngRedux.getState();
@@ -60,11 +60,11 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
                 this.filterOn = !this.filterOn;
             if (uischema) {
                 if (uischema.scope) {
-                    if (!this.filterOn) {
-                        this.redux.dispatch(core_2.addOffFilter(core_2.toDataPath(uischema.scope)));
+                    if (this.filterOn) {
+                        this.redux.dispatch(core_2.addFilter(core_2.toDataPath(uischema.scope)));
                     }
                     else {
-                        this.redux.dispatch(core_2.removeOffFilter(core_2.toDataPath(uischema.scope)));
+                        this.redux.dispatch(core_2.removeFilter(core_2.toDataPath(uischema.scope)));
                     }
                 }
                 else if (uischema.elements) {
