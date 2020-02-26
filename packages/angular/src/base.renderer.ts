@@ -54,7 +54,7 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
     if(ngRedux && ngRedux.getState) {
       let state = ngRedux.getState();
       this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
-          (<any>state.jsonforms.core.uischema)['filterMode'];
+          state.jsonforms.core.uischema.filterMode;
     }
   }
 

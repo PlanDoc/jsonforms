@@ -138,6 +138,11 @@ export interface UISchemaElement {
    * Any additional options.
    */
   options?: any;
+
+  /**
+   * Filter mode
+   */
+  filterMode?: boolean;
 }
 
 /**

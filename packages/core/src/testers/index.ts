@@ -335,7 +335,9 @@ export const isStringControl = and(uiTypeIs('Control'), schemaTypeIs('string'));
  */
 export const isMultiLineControl = and(
   uiTypeIs('Control'),
-  optionIs('multi', true)
+  or(optionIs('multi', true), schemaMatches(
+      schema =>
+          schema.hasOwnProperty('multi')))
 );
 
 /**

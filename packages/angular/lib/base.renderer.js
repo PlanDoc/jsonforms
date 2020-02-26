@@ -43,7 +43,7 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
         if (ngRedux && ngRedux.getState) {
             var state = ngRedux.getState();
             this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
-                state.jsonforms.core.uischema['filterMode'];
+                state.jsonforms.core.uischema.filterMode;
         }
     }
     JsonFormsBaseRenderer.prototype.getOwnProps = function () {

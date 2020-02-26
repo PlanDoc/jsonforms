@@ -254,7 +254,9 @@ exports.isStringControl = exports.and(exports.uiTypeIs('Control'), exports.schem
  * a 'multi' option.
  * @type {Tester}
  */
-exports.isMultiLineControl = exports.and(exports.uiTypeIs('Control'), exports.optionIs('multi', true));
+exports.isMultiLineControl = exports.and(exports.uiTypeIs('Control'), exports.or(exports.optionIs('multi', true), exports.schemaMatches(function (schema) {
+    return schema.hasOwnProperty('multi');
+})));
 /**
  * Tests whether the given UI schema is of type Control and if the schema
  * has a 'time' format.
