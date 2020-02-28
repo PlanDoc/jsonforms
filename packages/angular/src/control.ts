@@ -95,8 +95,8 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
 
         if(this.filterMode) {
           this.filterOn = state.jsonforms.filter && state.jsonforms.filter.filters &&
-              state.jsonforms.filter.filters.length > 0 &&
-              (state.jsonforms.filter.filters.indexOf(this.getControlName(this.uischema)) > -1);
+              state.jsonforms.filter.filters.size > 0 &&
+              state.jsonforms.filter.filters.has(this.getControlName(this.uischema));
         }
       });
     this.triggerValidation();
