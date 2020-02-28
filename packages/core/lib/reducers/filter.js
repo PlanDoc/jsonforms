@@ -13,16 +13,23 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var actions_1 = require("../actions");
 var initState = {
-    filters: []
+    filters: new Set()
 };
 exports.filterReducer = function (state, action) {
     if (state === void 0) { state = initState; }
     switch (action.type) {
         case actions_1.ADD_FILTER: {
-            return __assign({}, state, { filters: state.filters.concat([action.filterName]) });
+            var newState = __assign({}, state, { filters: new Set(state.filters) });
+            newState.filters = newState.filters.add(action.filterName);
+            return newState;
         }
         case actions_1.REMOVE_FILTER: {
-            return __assign({}, state, { filters: state.filters.filter(function (filter) { return filter != action.filterName; }) });
+            var newState = __assign({}, state, { filters: new Set(state.filters) });
+            newState.filters.delete(action.filterName);
+            return newState;
+        }
+        case actions_1.SET_FILTERS: {
+            return __assign({}, state, { filters: new Set(action.filterNames) });
         }
         default:
             return state;

@@ -1,16 +1,25 @@
-import {ADD_FILTER, AddFilterAction, REMOVE_FILTER, RemoveFilterAction} from "../actions";
+import {
+    ADD_FILTER,
+    AddFilterAction,
+    REMOVE_FILTER,
+    RemoveFilterAction,
+    SET_FILTERS,
+    SetFiltersAction
+} from "../actions";
 
 export interface JsonFormsFilterRegistryEntry {
-    filters?: string[];
+    filters?: Set<string>;
 }
 
 const initState: JsonFormsFilterRegistryEntry = {
-    filters: []
+    filters: new Set<string>()
 };
 
 type ValidFilterActions =
     | AddFilterAction
-    | RemoveFilterAction;
+    | RemoveFilterAction
+    | SetFiltersAction
+    ;
 
 export const filterReducer = (
     state: JsonFormsFilterRegistryEntry = initState,
@@ -18,16 +27,26 @@ export const filterReducer = (
 ) => {
     switch (action.type) {
         case ADD_FILTER: {
-            return {
+            let newState = {
                 ...state,
-                filters: [...state.filters, action.filterName]
-            }
+                filters: new Set(state.filters)
+            };
+            newState.filters = newState.filters.add(action.filterName);
+            return newState;
         }
         case REMOVE_FILTER: {
+            let newState = {
+                ...state,
+                filters: new Set(state.filters)
+            };
+            newState.filters.delete(action.filterName);
+            return newState;
+        }
+        case SET_FILTERS: {
             return {
                 ...state,
-                filters: state.filters.filter(filter => filter != action.filterName)
-            }
+                filters: new Set(action.filterNames)
+            };
         }
         default:
             return state;
