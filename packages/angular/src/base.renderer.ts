@@ -58,14 +58,22 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
     }
   }
 
+  getControlName(uischema: any): string {
+    let filterPath = null;
+    if(uischema) {
+      let absPath = this.path || "";
+      let scopedPath = toDataPath(uischema.scope) || "";
+      filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
+    }
+    return filterPath;
+  }
+
   toggleFilterMode(uischema: any, changeFilter: boolean = true) {
     if(this.filterMode) {
       if(changeFilter) this.filterOn = !this.filterOn;
 
       if(uischema) {
-        let absPath = this.path || "";
-        let scopedPath = toDataPath(uischema.scope) || "";
-        let filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
+        let filterPath = this.getControlName(uischema);
 
         if(uischema.scope) {
           if(this.filterOn) {

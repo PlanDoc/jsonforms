@@ -80,6 +80,11 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.id = props.id;
             _this.form.setValue(data);
             _this.mapAdditionalProps(props);
+            if (_this.filterMode) {
+                _this.filterOn = state.jsonforms.filter && state.jsonforms.filter.filters &&
+                    state.jsonforms.filter.filters.length > 0 &&
+                    (state.jsonforms.filter.filters.indexOf(_this.getControlName(_this.uischema)) > -1);
+            }
         });
         this.triggerValidation();
     };

@@ -9,5 +9,6 @@ export declare class JsonFormsBaseRenderer<T extends UISchemaElement> {
     filterOn: boolean;
     protected getOwnProps(): OwnPropsOfRenderer;
     constructor(ngRedux: NgRedux<JsonFormsState>);
+    getControlName(uischema: any): string;
     toggleFilterMode(uischema: any, changeFilter?: boolean): void;
 }

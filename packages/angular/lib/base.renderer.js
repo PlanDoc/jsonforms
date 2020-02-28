@@ -53,15 +53,22 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
             path: this.path
         };
     };
+    JsonFormsBaseRenderer.prototype.getControlName = function (uischema) {
+        var filterPath = null;
+        if (uischema) {
+            var absPath = this.path || "";
+            var scopedPath = core_2.toDataPath(uischema.scope) || "";
+            filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
+        }
+        return filterPath;
+    };
     JsonFormsBaseRenderer.prototype.toggleFilterMode = function (uischema, changeFilter) {
         if (changeFilter === void 0) { changeFilter = true; }
         if (this.filterMode) {
             if (changeFilter)
                 this.filterOn = !this.filterOn;
             if (uischema) {
-                var absPath = this.path || "";
-                var scopedPath = core_2.toDataPath(uischema.scope) || "";
-                var filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
+                var filterPath = this.getControlName(uischema);
                 if (uischema.scope) {
                     if (this.filterOn) {
                         this.redux.dispatch(core_2.addFilter(filterPath));

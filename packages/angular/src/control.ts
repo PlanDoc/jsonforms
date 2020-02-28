@@ -92,6 +92,12 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         this.id = props.id;
         this.form.setValue(data);
         this.mapAdditionalProps(props);
+
+        if(this.filterMode) {
+          this.filterOn = state.jsonforms.filter && state.jsonforms.filter.filters &&
+              state.jsonforms.filter.filters.length > 0 &&
+              (state.jsonforms.filter.filters.indexOf(this.getControlName(this.uischema)) > -1);
+        }
       });
     this.triggerValidation();
   }
