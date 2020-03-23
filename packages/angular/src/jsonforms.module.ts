@@ -31,7 +31,7 @@ import { UnknownRenderer } from './unknown.component';
   declarations: [JsonFormsOutlet, UnknownRenderer],
   entryComponents: [UnknownRenderer],
   imports: [NgReduxModule],
-  exports: [JsonFormsOutlet, NgReduxModule],
+  exports: [JsonFormsOutlet],
   providers: []
 })
 export class JsonFormsModule {}
