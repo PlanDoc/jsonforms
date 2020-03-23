@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var core_2 = require("jsonforms/packages/core");
+import { Input } from '@angular/core';
+import { toDataPath, addFilter, removeFilter } from 'jsonforms/packages/core';
 var JsonFormsBaseRenderer = /** @class */ (function () {
     function JsonFormsBaseRenderer(ngRedux) {
         this.filterMode = false;
@@ -24,7 +22,7 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
         var filterPath = null;
         if (uischema) {
             var absPath = this.path || "";
-            var scopedPath = core_2.toDataPath(uischema.scope) || "";
+            var scopedPath = toDataPath(uischema.scope) || "";
             filterPath = absPath + (absPath && scopedPath ? "." : "") + scopedPath;
         }
         return filterPath;
@@ -38,10 +36,10 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
                 var filterPath = this.getControlName(uischema);
                 if (uischema.scope) {
                     if (this.filterOn) {
-                        this.redux.dispatch(core_2.addFilter(filterPath));
+                        this.redux.dispatch(addFilter(filterPath));
                     }
                     else {
-                        this.redux.dispatch(core_2.removeFilter(filterPath));
+                        this.redux.dispatch(removeFilter(filterPath));
                     }
                 }
                 else if (uischema.elements) {
@@ -53,11 +51,11 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
         }
     };
     JsonFormsBaseRenderer.propDecorators = {
-        "uischema": [{ type: core_1.Input },],
-        "schema": [{ type: core_1.Input },],
-        "path": [{ type: core_1.Input },],
+        "uischema": [{ type: Input },],
+        "schema": [{ type: Input },],
+        "path": [{ type: Input },],
     };
     return JsonFormsBaseRenderer;
 }());
-exports.JsonFormsBaseRenderer = JsonFormsBaseRenderer;
+export { JsonFormsBaseRenderer };
 //# sourceMappingURL=base.renderer.js.map
