@@ -26,6 +26,6 @@
     "./src/index.ts"
   ],
   "angularCompilerOptions": {
-    "generateCodeForLibraries": false,
+    "generateCodeForLibraries": false
   }
 }
