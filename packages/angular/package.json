@@ -18,7 +18,7 @@
   "scripts": {
     "bundle": "../../node_modules/.bin/webpack --config ./webpack.build.js --env=production --display-error-details",
     "build": "../../node_modules/.bin/tsc",
-    "build-prod": "../../node_modules/.bin/ngc",
+    "build-prod": "node_modules/.bin/ngc",
     "clean": "rm -rf lib coverage dist .nyc_output 2> /dev/null",
     "lint": "../../node_modules/.bin/tslint --project tsconfig.json --exclude src/models/jsonSchema.ts",
     "report": "../../node_modules/.bin/nyc report --reporter=html",
@@ -54,6 +54,8 @@
     "copy-webpack-plugin": "^4.5.1",
     "redux": "^3.0.0",
     "rxjs": "^5.5.7",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "@angular/compiler": "^5.2.10",
+    "@angular/compiler-cli": "5.2.10"
   }
 }
