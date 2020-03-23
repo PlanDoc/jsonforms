@@ -1,0 +1,1 @@
+[{"__symbolic":"module","version":4,"metadata":{"UnknownRenderer":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Component","line":25,"character":1},"arguments":[{"selector":"unknown.renderer","template":"No applicable renderer found!"}]}]}}}]
