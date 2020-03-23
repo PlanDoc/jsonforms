@@ -12,7 +12,7 @@ var JsonFormsModule = /** @class */ (function () {
                     declarations: [jsonforms_component_1.JsonFormsOutlet, unknown_component_1.UnknownRenderer],
                     entryComponents: [unknown_component_1.UnknownRenderer],
                     imports: [store_1.NgReduxModule],
-                    exports: [jsonforms_component_1.JsonFormsOutlet],
+                    exports: [jsonforms_component_1.JsonFormsOutlet, store_1.NgReduxModule],
                     providers: []
                 },] },
     ];
