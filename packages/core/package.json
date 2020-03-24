@@ -16,7 +16,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "bundle": "../../node_modules/.bin/webpack --config ./webpack.build.js --env=production --display-error-details",
+    "bundle": "./node_modules/.bin/webpack --config ./webpack.build.js --env=production --display-error-details",
     "build": "../../node_modules/.bin/tsc",
     "clean": "rm -rf lib coverage dist .nyc_output 2> /dev/null",
     "lint": "../../node_modules/.bin/tslint --project tsconfig.json --exclude src/models/jsonSchema.ts",
@@ -53,6 +53,8 @@
     "jsdom": "^11.9.0",
     "jsdom-global": "^3.0.2",
     "redux": "^3.0.0",
-    "redux-mock-store": "1.4.0"
+    "redux-mock-store": "1.4.0",
+    "webpack-cli": "^3.3.11",
+    "webpack": "^4.0.1"
   }
 }
