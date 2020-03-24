@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22,10 +23,11 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { Actions, composeWithUi, computeLabel, isPlainLabel, mapDispatchToControlProps, mapStateToControlProps, Resolve } from 'jsonforms/packages/core';
-import { Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { JsonFormsBaseRenderer } from './base.renderer';
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("jsonforms/packages/core");
+var core_2 = require("@angular/core");
+var forms_1 = require("@angular/forms");
+var base_renderer_1 = require("./base.renderer");
 var JsonFormsControl = /** @class */ (function (_super) {
     __extends(JsonFormsControl, _super);
     function JsonFormsControl(ngRedux) {
@@ -35,7 +37,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
         _this.validator = function (_c) {
             return _this.error ? { error: _this.error } : null;
         };
-        _this.form = new FormControl({
+        _this.form = new forms_1.FormControl({
             value: '',
             disabled: true
         }, {
@@ -46,8 +48,8 @@ var JsonFormsControl = /** @class */ (function (_super) {
     }
     JsonFormsControl.prototype.onChange = function (ev) {
         var _this = this;
-        var path = composeWithUi(this.uischema, this.path);
-        this.ngRedux.dispatch(Actions.update(path, function () { return _this.getEventValue(ev); }));
+        var path = core_1.composeWithUi(this.uischema, this.path);
+        this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.getEventValue(ev); }));
         this.triggerValidation();
     };
     JsonFormsControl.prototype.ngOnInit = function () {
@@ -57,13 +59,13 @@ var JsonFormsControl = /** @class */ (function (_super) {
             .subscribe(function (state) {
             var props = _this.mapToProps(state);
             var data = props.data, enabled = props.enabled, errors = props.errors, label = props.label, required = props.required, schema = props.schema, uischema = props.uischema, visible = props.visible;
-            _this.label = computeLabel(isPlainLabel(label) ? label : label.default, required);
+            _this.label = core_1.computeLabel(core_1.isPlainLabel(label) ? label : label.default, required);
             _this.data = data;
             _this.error = errors ? errors.join('\n') : null;
             _this.enabled = enabled;
             _this.enabled ? _this.form.enable() : _this.form.disable();
             _this.hidden = !visible;
-            _this.scopedSchema = Resolve.schema(schema, uischema.scope);
+            _this.scopedSchema = core_1.Resolve.schema(schema, uischema.scope);
             _this.description =
                 _this.scopedSchema !== undefined ? _this.scopedSchema.description : '';
             _this.id = props.id;
@@ -105,8 +107,8 @@ var JsonFormsControl = /** @class */ (function (_super) {
         return props;
     };
     JsonFormsControl.prototype.mapToProps = function (state) {
-        var props = mapStateToControlProps(state, this.getOwnProps());
-        var dispatch = mapDispatchToControlProps(this.ngRedux.dispatch);
+        var props = core_1.mapStateToControlProps(state, this.getOwnProps());
+        var dispatch = core_1.mapDispatchToControlProps(this.ngRedux.dispatch);
         return __assign({}, props, dispatch);
     };
     JsonFormsControl.prototype.triggerValidation = function () {
@@ -116,11 +118,11 @@ var JsonFormsControl = /** @class */ (function (_super) {
         this.form.updateValueAndValidity();
     };
     JsonFormsControl.propDecorators = {
-        "id": [{ type: Input },],
-        "disabled": [{ type: Input },],
-        "visible": [{ type: Input },],
+        "id": [{ type: core_2.Input },],
+        "disabled": [{ type: core_2.Input },],
+        "visible": [{ type: core_2.Input },],
     };
     return JsonFormsControl;
-}(JsonFormsBaseRenderer));
-export { JsonFormsControl };
+}(base_renderer_1.JsonFormsBaseRenderer));
+exports.JsonFormsControl = JsonFormsControl;
 //# sourceMappingURL=control.js.map

@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11,14 +12,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import maxBy from 'lodash/maxBy';
-import { ComponentFactoryResolver, Directive, Input, ViewContainerRef } from '@angular/core';
-import { createId, isControl, mapStateToJsonFormsRendererProps } from 'jsonforms/packages/core';
-import { NgRedux } from '@angular-redux/store';
-import 'rxjs/add/operator/map';
-import { UnknownRenderer } from './unknown.component';
-import { JsonFormsBaseRenderer } from './base.renderer';
-import { JsonFormsControl } from './control';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var maxBy_1 = __importDefault(require("lodash/maxBy"));
+var core_1 = require("@angular/core");
+var core_2 = require("jsonforms/packages/core");
+var store_1 = require("@angular-redux/store");
+require("rxjs/add/operator/map");
+var unknown_component_1 = require("./unknown.component");
+var base_renderer_1 = require("./base.renderer");
+var control_1 = require("./control");
 var JsonFormsOutlet = /** @class */ (function (_super) {
     __extends(JsonFormsOutlet, _super);
     function JsonFormsOutlet(viewContainerRef, componentFactoryResolver, ngRedux) {
@@ -45,7 +50,7 @@ var JsonFormsOutlet = /** @class */ (function (_super) {
             .subscribe(function (state) { return _this.update(state); });
     };
     JsonFormsOutlet.prototype.update = function (state) {
-        var props = mapStateToJsonFormsRendererProps(state, {
+        var props = core_2.mapStateToJsonFormsRendererProps(state, {
             schema: this.schema,
             uischema: this.uischema,
             path: this.path
@@ -53,8 +58,8 @@ var JsonFormsOutlet = /** @class */ (function (_super) {
         var renderers = props.renderers;
         var schema = this.schema || props.schema;
         var uischema = this.uischema || props.uischema;
-        var renderer = maxBy(renderers, function (r) { return r.tester(uischema, schema); });
-        var bestComponent = UnknownRenderer;
+        var renderer = maxBy_1.default(renderers, function (r) { return r.tester(uischema, schema); });
+        var bestComponent = unknown_component_1.UnknownRenderer;
         if (renderer !== undefined && renderer.tester(uischema, schema) !== -1) {
             bestComponent = renderer.renderer;
         }
@@ -66,17 +71,17 @@ var JsonFormsOutlet = /** @class */ (function (_super) {
             this.viewContainerRef.clear();
             this.currentComponentRef = this.viewContainerRef.createComponent(componentFactory);
         }
-        if (this.currentComponentRef.instance instanceof JsonFormsBaseRenderer) {
+        if (this.currentComponentRef.instance instanceof base_renderer_1.JsonFormsBaseRenderer) {
             var instance = this.currentComponentRef
                 .instance;
             instance.uischema = uischema;
             instance.schema = schema;
             instance.path = this.path;
-            if (instance instanceof JsonFormsControl) {
+            if (instance instanceof control_1.JsonFormsControl) {
                 var controlInstance = instance;
                 if (controlInstance.id === undefined) {
-                    var id = isControl(props.uischema)
-                        ? createId(props.uischema.scope)
+                    var id = core_2.isControl(props.uischema)
+                        ? core_2.createId(props.uischema.scope)
                         : undefined;
                     instance.id = id;
                 }
@@ -89,20 +94,20 @@ var JsonFormsOutlet = /** @class */ (function (_super) {
         }
     };
     JsonFormsOutlet.decorators = [
-        { type: Directive, args: [{
+        { type: core_1.Directive, args: [{
                     selector: 'jsonforms-outlet'
                 },] },
     ];
     /** @nocollapse */
     JsonFormsOutlet.ctorParameters = function () { return [
-        { type: ViewContainerRef, },
-        { type: ComponentFactoryResolver, },
-        { type: NgRedux, },
+        { type: core_1.ViewContainerRef, },
+        { type: core_1.ComponentFactoryResolver, },
+        { type: store_1.NgRedux, },
     ]; };
     JsonFormsOutlet.propDecorators = {
-        "renderProps": [{ type: Input },],
+        "renderProps": [{ type: core_1.Input },],
     };
     return JsonFormsOutlet;
-}(JsonFormsBaseRenderer));
-export { JsonFormsOutlet };
+}(base_renderer_1.JsonFormsBaseRenderer));
+exports.JsonFormsOutlet = JsonFormsOutlet;
 //# sourceMappingURL=jsonforms.component.js.map

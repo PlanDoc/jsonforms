@@ -1,23 +1,8 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "outDir": "./lib",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "declaration": true,
-    "lib": [
-      "dom",
-      "es2015"
-    ],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "paths": {
-      "@angular/*": [ "node_modules/@angular/*"]
-    },
-    "target": "es5"
+    "sourceMap": true
   },
   "exclude":[
     "node_modules"
@@ -26,6 +11,8 @@
     "./src/index.ts"
   ],
   "angularCompilerOptions": {
-    "generateCodeForLibraries": false
+    "strictMetadataEmit": true,
+    "generateCodeForLibraries": false,
+    "skipTemplateCodegen": true
   }
 }

@@ -7,6 +7,6 @@ module.exports = merge(baseConfig, {
         library: "JSONFormsAngular"
       },
       externals: {
-          '@jsonforms/core': 'JSONFormsCore',
+          'jsonforms/core': 'JSONFormsCore',
     },
 });

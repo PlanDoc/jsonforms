@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@angular/core");
 var UnknownRenderer = /** @class */ (function () {
     function UnknownRenderer() {
     }
     UnknownRenderer.decorators = [
-        { type: Component, args: [{
+        { type: core_1.Component, args: [{
                     selector: 'unknown.renderer',
                     template: 'No applicable renderer found!'
                 },] },
     ];
     return UnknownRenderer;
 }());
-export { UnknownRenderer };
+exports.UnknownRenderer = UnknownRenderer;
 //# sourceMappingURL=unknown.component.js.map
