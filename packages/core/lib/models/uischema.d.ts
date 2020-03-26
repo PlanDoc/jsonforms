@@ -104,6 +104,10 @@ export interface UISchemaElement {
      * Filter mode
      */
     filterMode?: boolean;
+    /**
+     * Read only
+     */
+    readonly?: boolean;
 }
 /**
  * Represents a layout element which can order its children

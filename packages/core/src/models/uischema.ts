@@ -143,6 +143,11 @@ export interface UISchemaElement {
    * Filter mode
    */
   filterMode?: boolean;
+
+  /**
+   * Read only
+   */
+  readonly?: boolean;
 }
 
 /**
