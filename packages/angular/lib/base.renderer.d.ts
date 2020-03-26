@@ -7,6 +7,7 @@ export declare class JsonFormsBaseRenderer<T extends UISchemaElement> {
     private redux;
     filterMode: boolean;
     filterOn: boolean;
+    readonly: boolean;
     protected getOwnProps(): OwnPropsOfRenderer;
     constructor(ngRedux: NgRedux<JsonFormsState>);
     getControlName(uischema: any): string;

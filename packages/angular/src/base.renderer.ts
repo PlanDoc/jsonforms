@@ -40,6 +40,7 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
   private redux: NgRedux<JsonFormsState>;
   filterMode: boolean = false;
   filterOn: boolean = false;
+  readonly: boolean = false;
 
   protected getOwnProps(): OwnPropsOfRenderer {
     return {
@@ -55,6 +56,8 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
       let state = ngRedux.getState();
       this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.filterMode;
+      this.readonly = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+          state.jsonforms.core.uischema.readonly;
     }
   }
 

@@ -6,11 +6,14 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
     function JsonFormsBaseRenderer(ngRedux) {
         this.filterMode = false;
         this.filterOn = false;
+        this.readonly = false;
         this.redux = ngRedux;
         if (ngRedux && ngRedux.getState) {
             var state = ngRedux.getState();
             this.filterMode = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
                 state.jsonforms.core.uischema.filterMode;
+            this.readonly = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+                state.jsonforms.core.uischema.readonly;
         }
     }
     JsonFormsBaseRenderer.prototype.getOwnProps = function () {
