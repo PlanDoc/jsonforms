@@ -18,6 +18,7 @@ export declare class JsonFormsControl extends JsonFormsBaseRenderer<ControlEleme
     scopedSchema: JsonSchema;
     enabled: boolean;
     hidden: boolean;
+    required: boolean;
     constructor(ngRedux: NgRedux<JsonFormsState>);
     getEventValue: (event: any) => any;
     onChange(ev: any): void;

@@ -60,6 +60,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
             var props = _this.mapToProps(state);
             var data = props.data, enabled = props.enabled, errors = props.errors, label = props.label, required = props.required, schema = props.schema, uischema = props.uischema, visible = props.visible;
             _this.label = core_1.computeLabel(core_1.isPlainLabel(label) ? label : label.default, required);
+            _this.required = required;
             _this.data = data;
             _this.error = errors ? errors.join('\n') : null;
             _this.enabled = enabled;

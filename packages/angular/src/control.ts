@@ -39,6 +39,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
   scopedSchema: JsonSchema;
   enabled: boolean;
   hidden: boolean;
+  required: boolean;
 
   constructor(protected ngRedux: NgRedux<JsonFormsState>) {
     super(ngRedux);
@@ -81,6 +82,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
           isPlainLabel(label) ? label : label.default,
           required
         );
+        this.required = required;
         this.data = data;
         this.error = errors ? errors.join('\n') : null;
         this.enabled = enabled;
