@@ -54,6 +54,7 @@ import {
   i18nReducer
 } from './i18n';
 import {extractFilter, JsonFormsFilterRegistryEntry, filterReducer} from "./filter";
+import {defaultsReducer, extractDefaults, JsonFormsDefaultsRegistryEntry} from "./defaults";
 
 export { rendererReducer, fieldReducer, coreReducer, UISchemaTester };
 
@@ -68,6 +69,7 @@ export const jsonformsReducer = (
     uischemas: uischemaRegistryReducer,
     defaultData: defaultDataReducer,
     filter: filterReducer,
+    defaults: defaultsReducer,
     i18n: i18nReducer,
     ...additionalReducers
   });
@@ -86,6 +88,10 @@ export const getFilter = (
     state: JsonFormsState
 ): JsonFormsFilterRegistryEntry =>
     extractFilter(get(state, 'jsonforms.filter'));
+export const getDefaults = (
+    state: JsonFormsState
+): JsonFormsDefaultsRegistryEntry =>
+    extractDefaults(get(state, 'jsonforms.defaults'));
 export const getRenderers = (
   state: JsonFormsState
 ): JsonFormsRendererRegistryEntry[] => get(state, 'jsonforms.renderers');

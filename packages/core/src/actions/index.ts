@@ -56,6 +56,7 @@ export const REMOVE_DEFAULT_DATA: 'jsonforms/REMOVE_DEFAULT_DATA' = `jsonforms/R
 export const ADD_FILTER: 'jsonforms/ADD_FILTER' = `jsonforms/ADD_FILTER`;
 export const REMOVE_FILTER: 'jsonforms/REMOVE_FILTER' = `jsonforms/REMOVE_FILTER`;
 export const SET_FILTERS: 'jsonforms/SET_FILTERS' = `jsonforms/SET_FILTERS`;
+export const SET_DEFAULTS: 'jsonforms/SET_DEFAULTS' = `jsonforms/SET_DEFAULTS`;
 
 export interface UpdateAction {
   type: 'jsonforms/UPDATE';
@@ -134,6 +135,16 @@ export interface SetFiltersAction {
 export const setFilters = (filterNames: Iterable<string>) => ({
   type: SET_FILTERS,
   filterNames
+});
+
+export interface SetDefaultsAction {
+  type: 'jsonforms/SET_DEFAULTS',
+  defaults: any;
+}
+
+export const setDefaults = (defaults: any) => ({
+  type: SET_DEFAULTS,
+  defaults
 });
 
 export interface SetAjvAction {

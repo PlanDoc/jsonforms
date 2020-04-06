@@ -22,6 +22,7 @@ exports.REMOVE_DEFAULT_DATA = "jsonforms/REMOVE_DEFAULT_DATA";
 exports.ADD_FILTER = "jsonforms/ADD_FILTER";
 exports.REMOVE_FILTER = "jsonforms/REMOVE_FILTER";
 exports.SET_FILTERS = "jsonforms/SET_FILTERS";
+exports.SET_DEFAULTS = "jsonforms/SET_DEFAULTS";
 exports.init = function (data, schema, uischema, ajv) {
     if (schema === void 0) { schema = generators_1.generateJsonSchema(data); }
     if (uischema === void 0) { uischema = generators_1.generateDefaultUISchema(schema); }
@@ -53,6 +54,10 @@ exports.removeFilter = function (filterName) { return ({
 exports.setFilters = function (filterNames) { return ({
     type: exports.SET_FILTERS,
     filterNames: filterNames
+}); };
+exports.setDefaults = function (defaults) { return ({
+    type: exports.SET_DEFAULTS,
+    defaults: defaults
 }); };
 exports.setAjv = function (ajv) { return ({
     type: exports.SET_AJV,
