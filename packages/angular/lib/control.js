@@ -62,6 +62,14 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.label = core_1.computeLabel(core_1.isPlainLabel(label) ? label : label.default, required);
             _this.required = required;
             _this.data = data;
+            if (!_this.data && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
+                && _this.uischema && _this.uischema.scope) {
+                _this.data = state.jsonforms.defaults.defaults[core_1.toDataPath(_this.uischema.scope)];
+                if (_this.data) {
+                    var path = core_1.composeWithUi(_this.uischema, _this.path);
+                    _this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.data; }));
+                }
+            }
             _this.error = errors ? errors.join('\n') : null;
             _this.enabled = enabled;
             _this.enabled ? _this.form.enable() : _this.form.disable();
@@ -70,7 +78,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.description =
                 _this.scopedSchema !== undefined ? _this.scopedSchema.description : '';
             _this.id = props.id;
-            _this.form.setValue(data);
+            _this.form.setValue(_this.data);
             _this.mapAdditionalProps(props);
             if (_this.filterMode) {
                 _this.filterOn = state.jsonforms.filter && state.jsonforms.filter.filters &&

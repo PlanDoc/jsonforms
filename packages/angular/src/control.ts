@@ -10,7 +10,7 @@ import {
   mapDispatchToControlProps,
   mapStateToControlProps,
   OwnPropsOfControl,
-  Resolve
+  Resolve, toDataPath
 } from 'jsonforms/packages/core';
 import { Input, OnDestroy, OnInit } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
@@ -84,6 +84,14 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         );
         this.required = required;
         this.data = data;
+        if(!this.data && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
+            && this.uischema && this.uischema.scope) {
+          this.data = state.jsonforms.defaults.defaults[toDataPath(this.uischema.scope)];
+          if(this.data) {
+            const path = composeWithUi(this.uischema, this.path);
+            this.ngRedux.dispatch(Actions.update(path, () => this.data));
+          }
+        }
         this.error = errors ? errors.join('\n') : null;
         this.enabled = enabled;
         this.enabled ? this.form.enable() : this.form.disable();
@@ -92,7 +100,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         this.description =
           this.scopedSchema !== undefined ? this.scopedSchema.description : '';
         this.id = props.id;
-        this.form.setValue(data);
+        this.form.setValue(this.data);
         this.mapAdditionalProps(props);
 
         if(this.filterMode) {
