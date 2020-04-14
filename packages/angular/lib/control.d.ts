@@ -23,6 +23,7 @@ export declare class JsonFormsControl extends JsonFormsBaseRenderer<ControlEleme
     getEventValue: (event: any) => any;
     onChange(ev: any): void;
     ngOnInit(): void;
+    private parentDataPathExist;
     validator: ValidatorFn;
     mapAdditionalProps(props: ControlProps): void;
     ngOnDestroy(): void;

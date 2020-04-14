@@ -62,11 +62,11 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.label = core_1.computeLabel(core_1.isPlainLabel(label) ? label : label.default, required);
             _this.required = required;
             _this.data = data;
+            var path = core_1.composeWithUi(_this.uischema, _this.path);
             if (!_this.data && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
-                && _this.uischema && _this.uischema.scope) {
+                && _this.uischema && _this.uischema.scope && _this.parentDataPathExist(state.jsonforms.core.data, path)) {
                 _this.data = state.jsonforms.defaults.defaults[core_1.toDataPath(_this.uischema.scope)];
                 if (_this.data) {
-                    var path = core_1.composeWithUi(_this.uischema, _this.path);
                     _this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.data; }));
                 }
             }
@@ -87,6 +87,23 @@ var JsonFormsControl = /** @class */ (function (_super) {
             }
         });
         this.triggerValidation();
+    };
+    JsonFormsControl.prototype.parentDataPathExist = function (cleanData, dataPath) {
+        var dataPathArr = dataPath.split(".");
+        var elem = cleanData;
+        for (var i = 0; i < dataPathArr.length - 1; i++) {
+            var dataPathElem = dataPathArr[i];
+            if (elem && elem.constructor === Object && elem.hasOwnProperty(dataPathElem)) {
+                elem = elem[dataPathElem];
+            }
+            else if (elem && Array.isArray(elem) && !isNaN(Number(dataPathElem)) && elem.length > Number(dataPathElem)) {
+                elem = elem[Number(dataPathElem)];
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     };
     // @ts-ignore
     // @ts-ignore

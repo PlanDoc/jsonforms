@@ -84,11 +84,11 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         );
         this.required = required;
         this.data = data;
+        const path = composeWithUi(this.uischema, this.path);
         if(!this.data && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
-            && this.uischema && this.uischema.scope) {
+            && this.uischema && this.uischema.scope && this.parentDataPathExist(state.jsonforms.core.data, path)) {
           this.data = state.jsonforms.defaults.defaults[toDataPath(this.uischema.scope)];
           if(this.data) {
-            const path = composeWithUi(this.uischema, this.path);
             this.ngRedux.dispatch(Actions.update(path, () => this.data));
           }
         }
@@ -110,6 +110,22 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         }
       });
     this.triggerValidation();
+  }
+
+  private parentDataPathExist(cleanData: any, dataPath: string) {
+    let dataPathArr = dataPath.split(".");
+    let elem = cleanData;
+    for(let i = 0; i < dataPathArr.length-1; i++) {
+      let dataPathElem = dataPathArr[i];
+      if(elem && elem.constructor === Object && elem.hasOwnProperty(dataPathElem)) {
+        elem = elem[dataPathElem];
+      } else if(elem && Array.isArray(elem) && !isNaN(Number(dataPathElem)) && elem.length>Number(dataPathElem)) {
+        elem = elem[Number(dataPathElem)];
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 
   validator: ValidatorFn = (_c: AbstractControl): ValidationErrors | null => {
