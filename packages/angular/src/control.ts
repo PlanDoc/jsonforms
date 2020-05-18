@@ -92,7 +92,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
             this.ngRedux.dispatch(Actions.update(path, () => this.data));
           }
         }
-        this.error = errors ? errors.join('\n') : null;
+        this.error = errors && errors.length>0 ? errors[errors.length - 1] : null;
         this.enabled = enabled;
         this.enabled ? this.form.enable() : this.form.disable();
         this.hidden = !visible;

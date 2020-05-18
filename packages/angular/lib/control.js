@@ -70,7 +70,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
                     _this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.data; }));
                 }
             }
-            _this.error = errors ? errors.join('\n') : null;
+            _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
             _this.enabled = enabled;
             _this.enabled ? _this.form.enable() : _this.form.disable();
             _this.hidden = !visible;
