@@ -98,9 +98,9 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
           if(selectorVal != null) {
             this.visible = selectorVal != FieldPhaseSelector.HIDDEN;
             this.hidden = selectorVal == FieldPhaseSelector.HIDDEN;
-            this.enabled = selectorVal == FieldPhaseSelector.EDITABLE;
-            this.disabled = selectorVal == FieldPhaseSelector.READONLY;
-            this.readonly = selectorVal == FieldPhaseSelector.READONLY;
+            this.disabled = this.disabled || (selectorVal == FieldPhaseSelector.READONLY);
+            this.readonly = this.readonly || (selectorVal == FieldPhaseSelector.READONLY);
+            this.enabled = !this.disabled;
           }
         }
         this.enabled ? this.form.enable() : this.form.disable();

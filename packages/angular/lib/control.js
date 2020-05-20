@@ -78,9 +78,9 @@ var JsonFormsControl = /** @class */ (function (_super) {
                 if (selectorVal != null) {
                     _this.visible = selectorVal != core_1.FieldPhaseSelector.HIDDEN;
                     _this.hidden = selectorVal == core_1.FieldPhaseSelector.HIDDEN;
-                    _this.enabled = selectorVal == core_1.FieldPhaseSelector.EDITABLE;
-                    _this.disabled = selectorVal == core_1.FieldPhaseSelector.READONLY;
-                    _this.readonly = selectorVal == core_1.FieldPhaseSelector.READONLY;
+                    _this.disabled = _this.disabled || (selectorVal == core_1.FieldPhaseSelector.READONLY);
+                    _this.readonly = _this.readonly || (selectorVal == core_1.FieldPhaseSelector.READONLY);
+                    _this.enabled = !_this.disabled;
                 }
             }
             _this.enabled ? _this.form.enable() : _this.form.disable();
