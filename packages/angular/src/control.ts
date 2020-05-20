@@ -93,8 +93,10 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         this.enabled = enabled;
         this.hidden = !visible;
 
+        console.log(this.uischema);
         if(this.uischema && this.uischema.selector) {
-          let selectorVal = this.uischema.selector(this.uischema.scope);
+          let selectorVal = this.uischema.selector.apply(this.uischema.scope);
+          console.log(selectorVal);
           if(selectorVal != null) {
             this.visible = selectorVal != FieldPhaseSelector.HIDDEN;
             this.hidden = selectorVal == FieldPhaseSelector.HIDDEN;
