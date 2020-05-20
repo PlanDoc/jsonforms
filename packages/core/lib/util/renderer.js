@@ -53,6 +53,7 @@ var cloneDeep_1 = __importDefault(require("lodash/cloneDeep"));
 var merge_1 = __importDefault(require("lodash/merge"));
 var union_1 = __importDefault(require("lodash/union"));
 var reducers_1 = require("../reducers");
+var uischema_1 = require("../models/uischema");
 var util_1 = require("../util");
 var actions_1 = require("../actions");
 var generators_1 = require("../generators");
@@ -143,6 +144,17 @@ exports.mapStateToControlProps = function (state, ownProps) {
     var id = ownProps.id;
     var required = controlElement.scope !== undefined &&
         isRequired(ownProps.schema, controlElement.scope);
+    console.log(ownProps);
+    console.log(controlElement);
+    console.log(required);
+    console.log(uischema);
+    if (uischema && uischema.selector) {
+        var selectorVal = uischema.selector(controlElement.scope);
+        if (selectorVal != null) {
+            required = required && selectorVal == uischema_1.FieldPhaseSelector.EDITABLE;
+        }
+    }
+    console.log(required);
     var resolvedSchema = util_1.Resolve.schema(ownProps.schema, controlElement.scope);
     var description = resolvedSchema !== undefined ? resolvedSchema.description : '';
     var defaultConfig = cloneDeep_1.default(reducers_1.getConfig(state));
