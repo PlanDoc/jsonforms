@@ -84,6 +84,11 @@ export interface OrCondition extends ComposableCondition {
 export interface AndCondition extends ComposableCondition {
     type: 'AND';
 }
+export declare enum FieldPhaseSelector {
+    HIDDEN = 0,
+    READONLY = 1,
+    EDITABLE = 2
+}
 /**
  * Common base interface for any UI schema element.
  */
@@ -104,6 +109,10 @@ export interface UISchemaElement {
      * Filter mode
      */
     filterMode?: boolean;
+    /**
+     * Field selector
+     */
+    selector?: (fieldName: string) => FieldPhaseSelector;
     /**
      * Read only
      */

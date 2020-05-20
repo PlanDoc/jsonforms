@@ -22,6 +22,12 @@ var RuleEffect;
      */
     RuleEffect["DISABLE"] = "DISABLE";
 })(RuleEffect = exports.RuleEffect || (exports.RuleEffect = {}));
+var FieldPhaseSelector;
+(function (FieldPhaseSelector) {
+    FieldPhaseSelector[FieldPhaseSelector["HIDDEN"] = 0] = "HIDDEN";
+    FieldPhaseSelector[FieldPhaseSelector["READONLY"] = 1] = "READONLY";
+    FieldPhaseSelector[FieldPhaseSelector["EDITABLE"] = 2] = "EDITABLE";
+})(FieldPhaseSelector = exports.FieldPhaseSelector || (exports.FieldPhaseSelector = {}));
 exports.isGroup = function (layout) {
     return layout.type === 'Group';
 };
