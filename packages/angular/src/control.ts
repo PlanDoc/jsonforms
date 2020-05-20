@@ -4,25 +4,22 @@ import {
   computeLabel,
   ControlElement,
   ControlProps,
+  FieldPhaseSelector,
   isPlainLabel,
   JsonFormsState,
   JsonSchema,
   mapDispatchToControlProps,
   mapStateToControlProps,
   OwnPropsOfControl,
-  Resolve, toDataPath
+  Resolve,
+  toDataPath
 } from 'jsonforms/packages/core';
-import { Input, OnDestroy, OnInit } from '@angular/core';
-import { NgRedux } from '@angular-redux/store';
-import {
-  AbstractControl,
-  FormControl,
-  ValidationErrors,
-  ValidatorFn
-} from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {Input, OnDestroy, OnInit} from '@angular/core';
+import {NgRedux} from '@angular-redux/store';
+import {AbstractControl, FormControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {Subscription} from 'rxjs';
 
-import { JsonFormsBaseRenderer } from './base.renderer';
+import {JsonFormsBaseRenderer} from './base.renderer';
 
 export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
   implements OnInit, OnDestroy {
@@ -94,8 +91,20 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         }
         this.error = errors && errors.length>0 ? errors[errors.length - 1] : null;
         this.enabled = enabled;
-        this.enabled ? this.form.enable() : this.form.disable();
         this.hidden = !visible;
+
+        if(this.uischema && this.uischema.selector) {
+          let selectorVal = this.uischema.selector(this.uischema.scope);
+          if(selectorVal != null) {
+            this.visible = selectorVal != FieldPhaseSelector.HIDDEN;
+            this.hidden = selectorVal == FieldPhaseSelector.HIDDEN;
+            this.enabled = selectorVal == FieldPhaseSelector.EDITABLE;
+            this.disabled = selectorVal == FieldPhaseSelector.READONLY;
+            this.readonly = selectorVal == FieldPhaseSelector.READONLY;
+          }
+        }
+        this.enabled ? this.form.enable() : this.form.disable();
+
         this.scopedSchema = Resolve.schema(schema, uischema.scope);
         this.description =
           this.scopedSchema !== undefined ? this.scopedSchema.description : '';

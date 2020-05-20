@@ -72,8 +72,18 @@ var JsonFormsControl = /** @class */ (function (_super) {
             }
             _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
             _this.enabled = enabled;
-            _this.enabled ? _this.form.enable() : _this.form.disable();
             _this.hidden = !visible;
+            if (_this.uischema && _this.uischema.selector) {
+                var selectorVal = _this.uischema.selector(_this.uischema.scope);
+                if (selectorVal != null) {
+                    _this.visible = selectorVal != core_1.FieldPhaseSelector.HIDDEN;
+                    _this.hidden = selectorVal == core_1.FieldPhaseSelector.HIDDEN;
+                    _this.enabled = selectorVal == core_1.FieldPhaseSelector.EDITABLE;
+                    _this.disabled = selectorVal == core_1.FieldPhaseSelector.READONLY;
+                    _this.readonly = selectorVal == core_1.FieldPhaseSelector.READONLY;
+                }
+            }
+            _this.enabled ? _this.form.enable() : _this.form.disable();
             _this.scopedSchema = core_1.Resolve.schema(schema, uischema.scope);
             _this.description =
                 _this.scopedSchema !== undefined ? _this.scopedSchema.description : '';
