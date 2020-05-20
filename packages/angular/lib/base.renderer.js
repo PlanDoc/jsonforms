@@ -7,6 +7,7 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
         this.filterMode = false;
         this.filterOn = false;
         this.readonly = false;
+        this.selector = null;
         this.redux = ngRedux;
         if (ngRedux && ngRedux.getState) {
             var state = ngRedux.getState();
@@ -14,6 +15,8 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
                 state.jsonforms.core.uischema.filterMode;
             this.readonly = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
                 state.jsonforms.core.uischema.readonly;
+            this.selector = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+                state.jsonforms.core.uischema.selector;
         }
     }
     JsonFormsBaseRenderer.prototype.getOwnProps = function () {

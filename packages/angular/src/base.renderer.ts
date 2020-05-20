@@ -28,7 +28,7 @@ import {
   JsonSchema,
   OwnPropsOfRenderer, toDataPath,
   UISchemaElement,
-  addFilter, removeFilter
+  addFilter, removeFilter, FieldPhaseSelector
 } from 'jsonforms/packages/core';
 import {NgRedux} from "@angular-redux/store";
 
@@ -41,6 +41,8 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
   filterMode: boolean = false;
   filterOn: boolean = false;
   readonly: boolean = false;
+
+  selector?: (fieldName: string) => FieldPhaseSelector = null;
 
   protected getOwnProps(): OwnPropsOfRenderer {
     return {
@@ -58,6 +60,8 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
           state.jsonforms.core.uischema.filterMode;
       this.readonly = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.readonly;
+      this.selector = state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+          state.jsonforms.core.uischema.selector;
     }
   }
 
