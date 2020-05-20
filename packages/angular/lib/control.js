@@ -73,13 +73,8 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
             _this.enabled = enabled;
             _this.hidden = !visible;
-            console.log(_this.uischema);
-            if (_this.uischema && _this.uischema.selector) {
-                console.log(_this.uischema.selector);
-                var selectorVal = _this.uischema.selector(_this.uischema.scope);
-                console.log(_this.uischema.scope);
-                console.log(core_1.toDataPath(_this.uischema.scope));
-                console.log(selectorVal);
+            if (_this.uischema && _this.selector) {
+                var selectorVal = _this.selector(_this.uischema.scope);
                 if (selectorVal != null) {
                     _this.visible = selectorVal != core_1.FieldPhaseSelector.HIDDEN;
                     _this.hidden = selectorVal == core_1.FieldPhaseSelector.HIDDEN;
