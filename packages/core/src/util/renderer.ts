@@ -39,7 +39,7 @@ import {
 } from '../reducers';
 import { RankedTester } from '../testers';
 import { JsonSchema } from '../models/jsonSchema';
-import {ControlElement, FieldPhaseSelector, UISchemaElement} from '../models/uischema';
+import {ControlElement, UISchemaElement} from '../models/uischema';
 import {
   composeWithUi,
   createLabelDescriptionFrom,
@@ -347,17 +347,6 @@ export const mapStateToControlProps = (
   let required =
     controlElement.scope !== undefined &&
     isRequired(ownProps.schema, controlElement.scope);
-  console.log(ownProps);
-  console.log(controlElement);
-  console.log(required);
-  console.log(uischema);
-  if(uischema && uischema.selector) {
-    let selectorVal = uischema.selector(controlElement.scope);
-    if(selectorVal != null) {
-      required = required && selectorVal == FieldPhaseSelector.EDITABLE;
-    }
-  }
-  console.log(required);
 
   const resolvedSchema = Resolve.schema(ownProps.schema, controlElement.scope);
   const description =
