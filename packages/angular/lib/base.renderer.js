@@ -4,17 +4,19 @@ var core_1 = require("@angular/core");
 var core_2 = require("jsonforms/packages/core");
 var JsonFormsBaseRenderer = /** @class */ (function () {
     function JsonFormsBaseRenderer(ngRedux) {
+        this.readonly = false;
         this.filterMode = false;
         this.filterOn = false;
-        this.readonly = false;
         this.selector = null;
         this.redux = ngRedux;
         if (ngRedux && ngRedux.getState) {
             var state = ngRedux.getState();
             this.filterMode = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
                 state.jsonforms.core.uischema.filterMode) || (this.uischema && this.uischema.filterMode);
-            this.readonly = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
-                state.jsonforms.core.uischema.readonly) || (this.uischema && this.uischema.readonly);
+            if (!this.readonly) {
+                this.readonly = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+                    state.jsonforms.core.uischema.readonly) || (this.uischema && this.uischema.readonly);
+            }
             this.selector = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
                 state.jsonforms.core.uischema.selector) || (this.uischema && this.uischema.selector);
         }
@@ -62,6 +64,7 @@ var JsonFormsBaseRenderer = /** @class */ (function () {
         "uischema": [{ type: core_1.Input },],
         "schema": [{ type: core_1.Input },],
         "path": [{ type: core_1.Input },],
+        "readonly": [{ type: core_1.Input },],
     };
     return JsonFormsBaseRenderer;
 }());

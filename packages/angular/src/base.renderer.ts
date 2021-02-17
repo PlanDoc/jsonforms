@@ -36,11 +36,11 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
   @Input() uischema: T;
   @Input() schema: JsonSchema;
   @Input() path: string;
+  @Input() readonly: boolean = false;
 
   private redux: NgRedux<JsonFormsState>;
   filterMode: boolean = false;
   filterOn: boolean = false;
-  readonly: boolean = false;
 
   selector?: (fieldName: string) => FieldPhaseSelector = null;
 
@@ -58,8 +58,10 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
       let state = ngRedux.getState();
       this.filterMode = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.filterMode) || (this.uischema && this.uischema.filterMode);
-      this.readonly = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+      if(!this.readonly) {
+        this.readonly = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.readonly) || (this.uischema && this.uischema.readonly);
+      }
       this.selector = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.selector) || (this.uischema && this.uischema.selector);
     }
