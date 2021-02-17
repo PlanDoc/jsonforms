@@ -62,8 +62,9 @@ export class JsonFormsBaseRenderer<T extends UISchemaElement> {
         this.readonly = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
           state.jsonforms.core.uischema.readonly) || (this.uischema && this.uischema.readonly);
       }
-      this.selector = (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
-          state.jsonforms.core.uischema.selector) || (this.uischema && this.uischema.selector);
+      this.selector = (this.uischema && this.uischema.selector) ||
+        (state && state.jsonforms && state.jsonforms.core && state.jsonforms.core.uischema &&
+          state.jsonforms.core.uischema.selector);
     }
   }
 
