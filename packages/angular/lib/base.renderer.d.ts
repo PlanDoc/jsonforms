@@ -4,10 +4,10 @@ export declare class JsonFormsBaseRenderer<T extends UISchemaElement> {
     uischema: T;
     schema: JsonSchema;
     path: string;
-    readonly: boolean;
     private redux;
     filterMode: boolean;
     filterOn: boolean;
+    readonly: boolean;
     selector?: (fieldName: string) => FieldPhaseSelector;
     protected getOwnProps(): OwnPropsOfRenderer;
     constructor(ngRedux: NgRedux<JsonFormsState>);

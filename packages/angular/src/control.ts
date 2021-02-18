@@ -93,14 +93,19 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         this.enabled = enabled;
         this.hidden = !visible;
 
-        if(this.uischema && (this.selector || this.uischema.selector)) {
-          let selectorVal = this.selector ? this.selector(path) : this.uischema.selector(path);
-          if(selectorVal != null) {
-            this.visible = selectorVal != FieldPhaseSelector.HIDDEN;
-            this.hidden = selectorVal == FieldPhaseSelector.HIDDEN;
-            this.disabled = this.disabled || (selectorVal == FieldPhaseSelector.READONLY);
-            this.readonly = this.readonly || (selectorVal == FieldPhaseSelector.READONLY);
-            this.enabled = !this.disabled;
+        if(this.uischema) {
+          if(!this.readonly) {
+            this.readonly = this.uischema.readonly;
+          }
+          if(this.selector) {
+            let selectorVal = this.selector(path);
+            if(selectorVal != null) {
+              this.visible = selectorVal != FieldPhaseSelector.HIDDEN;
+              this.hidden = selectorVal == FieldPhaseSelector.HIDDEN;
+              this.disabled = this.disabled || (selectorVal == FieldPhaseSelector.READONLY);
+              this.readonly = this.readonly || (selectorVal == FieldPhaseSelector.READONLY);
+              this.enabled = !this.disabled;
+            }
           }
         }
         this.enabled ? this.form.enable() : this.form.disable();

@@ -73,14 +73,19 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
             _this.enabled = enabled;
             _this.hidden = !visible;
-            if (_this.uischema && (_this.selector || _this.uischema.selector)) {
-                var selectorVal = _this.selector ? _this.selector(path) : _this.uischema.selector(path);
-                if (selectorVal != null) {
-                    _this.visible = selectorVal != core_1.FieldPhaseSelector.HIDDEN;
-                    _this.hidden = selectorVal == core_1.FieldPhaseSelector.HIDDEN;
-                    _this.disabled = _this.disabled || (selectorVal == core_1.FieldPhaseSelector.READONLY);
-                    _this.readonly = _this.readonly || (selectorVal == core_1.FieldPhaseSelector.READONLY);
-                    _this.enabled = !_this.disabled;
+            if (_this.uischema) {
+                if (!_this.readonly) {
+                    _this.readonly = _this.uischema.readonly;
+                }
+                if (_this.selector) {
+                    var selectorVal = _this.selector(path);
+                    if (selectorVal != null) {
+                        _this.visible = selectorVal != core_1.FieldPhaseSelector.HIDDEN;
+                        _this.hidden = selectorVal == core_1.FieldPhaseSelector.HIDDEN;
+                        _this.disabled = _this.disabled || (selectorVal == core_1.FieldPhaseSelector.READONLY);
+                        _this.readonly = _this.readonly || (selectorVal == core_1.FieldPhaseSelector.READONLY);
+                        _this.enabled = !_this.disabled;
+                    }
                 }
             }
             _this.enabled ? _this.form.enable() : _this.form.disable();
