@@ -75,7 +75,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.hidden = !visible;
             if (_this.uischema) {
                 if (!_this.readonly) {
-                    _this.readonly = _this.uischema.readonly;
+                    _this.readonly = _this.uischema && _this.uischema.readonly;
                 }
                 if (_this.selector) {
                     var selectorVal = _this.selector(path);
