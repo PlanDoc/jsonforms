@@ -28,6 +28,11 @@ var FieldPhaseSelector;
     FieldPhaseSelector[FieldPhaseSelector["READONLY"] = 1] = "READONLY";
     FieldPhaseSelector[FieldPhaseSelector["EDITABLE"] = 2] = "EDITABLE";
 })(FieldPhaseSelector = exports.FieldPhaseSelector || (exports.FieldPhaseSelector = {}));
+var AttachmentSelectMode;
+(function (AttachmentSelectMode) {
+    AttachmentSelectMode[AttachmentSelectMode["GALLERY"] = 0] = "GALLERY";
+    AttachmentSelectMode[AttachmentSelectMode["TAKE_PHOTO"] = 1] = "TAKE_PHOTO";
+})(AttachmentSelectMode = exports.AttachmentSelectMode || (exports.AttachmentSelectMode = {}));
 exports.isGroup = function (layout) {
     return layout.type === 'Group';
 };

@@ -89,6 +89,14 @@ export declare enum FieldPhaseSelector {
     READONLY = 1,
     EDITABLE = 2
 }
+export declare enum AttachmentSelectMode {
+    GALLERY = 0,
+    TAKE_PHOTO = 1
+}
+export interface JsonFormsContext {
+    selectAttachment(mode?: AttachmentSelectMode): Promise<string>;
+    getAttachmentUrl(uri: string): string;
+}
 /**
  * Common base interface for any UI schema element.
  */
@@ -117,6 +125,10 @@ export interface UISchemaElement {
      * Read only
      */
     readonly?: boolean;
+    /**
+     * jsonforms context
+     */
+    context?: JsonFormsContext;
 }
 /**
  * Represents a layout element which can order its children

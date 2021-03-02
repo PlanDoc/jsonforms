@@ -126,6 +126,16 @@ export enum FieldPhaseSelector {
   EDITABLE
 }
 
+export enum AttachmentSelectMode {
+  GALLERY,
+  TAKE_PHOTO
+}
+
+export interface JsonFormsContext {
+  selectAttachment(mode?: AttachmentSelectMode): Promise<string>;
+  getAttachmentUrl(uri: string): string;
+}
+
 /**
  * Common base interface for any UI schema element.
  */
@@ -159,6 +169,11 @@ export interface UISchemaElement {
    * Read only
    */
   readonly?: boolean;
+
+  /**
+   * jsonforms context
+   */
+  context?: JsonFormsContext;
 }
 
 /**
