@@ -132,7 +132,7 @@ export enum AttachmentSelectMode {
 }
 
 export interface JsonFormsContext {
-  selectAttachment(mode?: AttachmentSelectMode): Promise<string>;
+  selectAttachment(attId: string, mode?: AttachmentSelectMode): Promise<string>;
   getAttachmentUrl(uri: string): string;
 }
 

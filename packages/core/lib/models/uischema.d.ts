@@ -94,7 +94,7 @@ export declare enum AttachmentSelectMode {
     TAKE_PHOTO = 1
 }
 export interface JsonFormsContext {
-    selectAttachment(mode?: AttachmentSelectMode): Promise<string>;
+    selectAttachment(attId: string, mode?: AttachmentSelectMode): Promise<string>;
     getAttachmentUrl(uri: string): string;
 }
 /**
