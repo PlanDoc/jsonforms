@@ -70,7 +70,7 @@ export class JsonFormsOutlet extends JsonFormsBaseRenderer<UISchemaElement>
   set renderProps(renderProps: OwnPropsOfRenderer) {
     this.path = renderProps.path;
     this.schema = renderProps.schema;
-    this.uischema = renderProps.uischema;
+    this.uischema = {...renderProps.uischema};
     this.update(this.ngRedux.getState());
   }
 
