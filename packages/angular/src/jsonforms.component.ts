@@ -116,7 +116,7 @@ export class JsonFormsOutlet extends JsonFormsBaseRenderer<UISchemaElement>
     if (this.currentComponentRef.instance instanceof JsonFormsBaseRenderer) {
       const instance = this.currentComponentRef
         .instance as JsonFormsBaseRenderer<UISchemaElement>;
-      instance.uischema = uischema;
+      instance.uischema = {...uischema};
       instance.schema = schema;
       instance.path = this.path;
       if (instance instanceof JsonFormsControl) {

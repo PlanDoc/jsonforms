@@ -85,7 +85,7 @@ var JsonFormsOutlet = /** @class */ (function (_super) {
         if (this.currentComponentRef.instance instanceof base_renderer_1.JsonFormsBaseRenderer) {
             var instance = this.currentComponentRef
                 .instance;
-            instance.uischema = uischema;
+            instance.uischema = __assign({}, uischema);
             instance.schema = schema;
             instance.path = this.path;
             if (instance instanceof control_1.JsonFormsControl) {
