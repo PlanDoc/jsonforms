@@ -63,7 +63,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.required = required;
             _this.data = data;
             var path = core_1.composeWithUi(_this.uischema, _this.path);
-            if (_this.data != null && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
+            if ((!_this.data && _this.data != 0) && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
                 && _this.uischema && _this.uischema.scope && _this.parentDataPathExist(state.jsonforms.core.data, path)) {
                 _this.data = state.jsonforms.defaults.defaults[core_1.toDataPath(_this.uischema.scope)];
                 if (_this.data) {

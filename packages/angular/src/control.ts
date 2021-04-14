@@ -82,7 +82,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
         this.required = required;
         this.data = data;
         const path = composeWithUi(this.uischema, this.path);
-        if(this.data != null && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
+        if((!this.data && this.data != 0) && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
             && this.uischema && this.uischema.scope && this.parentDataPathExist(state.jsonforms.core.data, path)) {
           this.data = state.jsonforms.defaults.defaults[toDataPath(this.uischema.scope)];
           if(this.data) {
