@@ -63,15 +63,18 @@ var JsonFormsControl = /** @class */ (function (_super) {
             _this.required = required;
             _this.data = data;
             var path = core_1.composeWithUi(_this.uischema, _this.path);
+            var setError = true;
             if ((!_this.data && _this.data != 0) && state && state.jsonforms && state.jsonforms.defaults && state.jsonforms.defaults.defaults
                 && _this.uischema && _this.uischema.scope && _this.parentDataPathExist(state.jsonforms.core.data, path)) {
                 _this.data = state.jsonforms.defaults.defaults[core_1.toDataPath(_this.uischema.scope)];
                 if (_this.data) {
                     _this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.data; }));
-                    _this.triggerValidation();
+                    setError = false;
                 }
             }
-            _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
+            if (setError) {
+                _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;
+            }
             _this.enabled = enabled;
             _this.hidden = !visible;
             if (_this.uischema) {
