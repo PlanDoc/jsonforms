@@ -68,6 +68,7 @@ var JsonFormsControl = /** @class */ (function (_super) {
                 _this.data = state.jsonforms.defaults.defaults[core_1.toDataPath(_this.uischema.scope)];
                 if (_this.data) {
                     _this.ngRedux.dispatch(core_1.Actions.update(path, function () { return _this.data; }));
+                    _this.triggerValidation();
                 }
             }
             _this.error = errors && errors.length > 0 ? errors[errors.length - 1] : null;

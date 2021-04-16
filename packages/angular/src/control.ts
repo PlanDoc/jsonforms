@@ -87,6 +87,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
           this.data = state.jsonforms.defaults.defaults[toDataPath(this.uischema.scope)];
           if(this.data) {
             this.ngRedux.dispatch(Actions.update(path, () => this.data));
+            this.triggerValidation();
           }
         }
         this.error = errors && errors.length>0 ? errors[errors.length - 1] : null;
