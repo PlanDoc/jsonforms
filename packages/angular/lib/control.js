@@ -157,10 +157,13 @@ var JsonFormsControl = /** @class */ (function (_super) {
         return __assign({}, props, dispatch);
     };
     JsonFormsControl.prototype.triggerValidation = function () {
+        var _this = this;
         // these cause the correct update of the error underline, seems to be
         // related to ionic-team/ionic#11640
-        this.form.markAsTouched();
-        this.form.updateValueAndValidity();
+        setTimeout(function () {
+            _this.form.markAsTouched();
+            _this.form.updateValueAndValidity();
+        });
     };
     JsonFormsControl.propDecorators = {
         "id": [{ type: core_2.Input },],

@@ -186,7 +186,9 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
   protected triggerValidation() {
     // these cause the correct update of the error underline, seems to be
     // related to ionic-team/ionic#11640
-    this.form.markAsTouched();
-    this.form.updateValueAndValidity();
+    setTimeout(() => {
+      this.form.markAsTouched();
+      this.form.updateValueAndValidity();
+    });
   }
 }
