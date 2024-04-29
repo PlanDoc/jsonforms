@@ -99,7 +99,7 @@ export class JsonFormsControl extends JsonFormsBaseRenderer<ControlElement>
 
         if(this.uischema) {
           if(!this.readonly) {
-            this.readonly = this.uischema && this.uischema.readonly;
+            this.readonly = this.uischema && this.uischema.options && this.uischema.options.readonly;
           }
           if(this.selector) {
             let selectorVal = this.selector(path);
