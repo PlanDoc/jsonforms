@@ -25,28 +25,32 @@
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
-  MatError,
-  MatFormFieldModule,
-  MatInputModule
-} from '@angular/material';
-import { NgRedux } from '@angular-redux/store';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { DebugElement, NgZone } from '@angular/core';
+} from '@angular/material/autocomplete';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { DebugElement } from '@angular/core';
 import {
   ComponentFixture,
   fakeAsync,
-  inject,
   TestBed,
-  tick
+  tick,
+  waitForAsync,
 } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MockNgRedux } from '@angular-redux/store/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ErrorTestExpectation, setupMockStore } from '@jsonforms/angular-test';
-import { ControlElement, JsonSchema } from '@jsonforms/core';
-import { MockNgZone } from './mock-ng-zone';
+import {
+  ErrorTestExpectation,
+  setupMockStore,
+  getJsonFormsService,
+} from './common';
+import { ControlElement, JsonSchema, Actions } from '@jsonforms/core';
 import { AutocompleteControlRenderer } from '../src';
+import { JsonFormsAngularService } from '@jsonforms/angular';
+import { ErrorObject } from 'ajv';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 
 const data = { foo: 'A' };
 const schema: JsonSchema = {
@@ -54,13 +58,13 @@ const schema: JsonSchema = {
   properties: {
     foo: {
       type: 'string',
-      enum: ['A', 'B', 'C']
-    }
-  }
+      enum: ['A', 'B', 'C'],
+    },
+  },
 };
 const uischema: ControlElement = {
   type: 'Control',
-  scope: '#/properties/foo'
+  scope: '#/properties/foo',
 };
 
 const imports = [
@@ -68,29 +72,27 @@ const imports = [
   MatInputModule,
   MatFormFieldModule,
   NoopAnimationsModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 ];
-const providers = [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }];
+const providers = [JsonFormsAngularService];
 const componentUT: any = AutocompleteControlRenderer;
 const errorTest: ErrorTestExpectation = {
   errorInstance: MatError,
   numberOfElements: 1,
-  indexOfElement: 0
+  indexOfElement: 0,
 };
 
 describe('Autocomplete control Base Tests', () => {
   let fixture: ComponentFixture<AutocompleteControlRenderer>;
   let component: AutocompleteControlRenderer;
   let inputElement: HTMLInputElement;
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [componentUT],
       imports: imports,
-      providers: providers
+      providers: providers,
     }).compileComponents();
-
-    MockNgRedux.reset();
-  });
+  }));
   beforeEach(() => {
     fixture = TestBed.createComponent(componentUT);
     component = fixture.componentInstance;
@@ -99,10 +101,12 @@ describe('Autocomplete control Base Tests', () => {
   });
 
   it('should render', fakeAsync(() => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    mockSubStore.complete();
-    fixture.detectChanges();
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.ngOnInit();
+    fixture.detectChanges();
     tick();
     expect(component.data).toBe('A');
     expect(inputElement.value).toBe('A');
@@ -110,19 +114,14 @@ describe('Autocomplete control Base Tests', () => {
   }));
 
   it('should support updating the state', fakeAsync(() => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    fixture.detectChanges();
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.ngOnInit();
+    fixture.detectChanges();
     tick();
-    mockSubStore.next({
-      jsonforms: {
-        core: {
-          data: { foo: 'B' },
-          schema: schema
-        }
-      }
-    });
-    mockSubStore.complete();
+    getJsonFormsService(component).updateCore(Actions.update('foo', () => 'B'));
     tick();
     fixture.detectChanges();
     expect(component.data).toBe('B');
@@ -130,55 +129,45 @@ describe('Autocomplete control Base Tests', () => {
   }));
 
   it('should update with undefined value', () => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    fixture.detectChanges();
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.ngOnInit();
+    fixture.detectChanges();
 
-    mockSubStore.next({
-      jsonforms: {
-        core: {
-          data: { foo: undefined },
-          schema: schema
-        }
-      }
-    });
-    mockSubStore.complete();
+    getJsonFormsService(component).updateCore(
+      Actions.update('foo', () => undefined)
+    );
     fixture.detectChanges();
     expect(component.data).toBe(undefined);
     expect(inputElement.value).toBe('');
   });
   it('should update with null value', () => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     fixture.detectChanges();
     component.ngOnInit();
 
-    mockSubStore.next({
-      jsonforms: {
-        core: {
-          data: { foo: null },
-          schema: schema
-        }
-      }
-    });
-    mockSubStore.complete();
+    getJsonFormsService(component).updateCore(
+      Actions.update('foo', () => null)
+    );
     fixture.detectChanges();
     expect(component.data).toBe(null);
     expect(inputElement.value).toBe('');
   });
   it('should not update with wrong ref', fakeAsync(() => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    fixture.detectChanges();
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.ngOnInit();
+    fixture.detectChanges();
     tick();
-    mockSubStore.next({
-      jsonforms: {
-        core: {
-          data: { foo: 'A', bar: 'B' },
-          schema: schema
-        }
-      }
-    });
-    mockSubStore.complete();
+    getJsonFormsService(component).updateCore(Actions.update('foo', () => 'A'));
+    getJsonFormsService(component).updateCore(Actions.update('bar', () => 'B'));
     fixture.detectChanges();
     tick();
     expect(component.data).toBe('A');
@@ -186,17 +175,35 @@ describe('Autocomplete control Base Tests', () => {
   }));
   // store needed as we evaluate the calculated enabled value to disable/enable the control
   it('can be disabled', () => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.disabled = true;
-    mockSubStore.complete();
-    fixture.detectChanges();
     component.ngOnInit();
+    fixture.detectChanges();
     expect(inputElement.disabled).toBe(true);
   });
+  it('can be hidden', () => {
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
+    component.visible = false;
+    component.ngOnInit();
+    fixture.detectChanges();
+    const hasDisplayNone =
+      'none' === fixture.nativeElement.children[0].style.display;
+    const hasHidden = fixture.nativeElement.children[0].hidden;
+    expect(hasDisplayNone || hasHidden).toBeTruthy();
+  });
+
   it('id should be present in output', () => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
+    setupMockStore(fixture, { uischema, schema, data });
     component.id = 'myId';
-    mockSubStore.complete();
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
 
     fixture.detectChanges();
     component.ngOnInit();
@@ -206,58 +213,37 @@ describe('Autocomplete control Base Tests', () => {
 describe('AutoComplete control Input Event Tests', () => {
   let fixture: ComponentFixture<AutocompleteControlRenderer>;
   let component: AutocompleteControlRenderer;
-  let inputElement: HTMLInputElement;
-  let overlayContainer: OverlayContainer;
-  let overlayContainerElement: HTMLElement;
-  let zone: MockNgZone;
-  beforeEach(() => {
+  let loader: HarnessLoader;
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [componentUT],
       imports: imports,
-      providers: [
-        ...providers,
-        { provide: NgZone, useFactory: () => (zone = new MockNgZone()) }
-      ]
+      providers: [...providers],
     }).compileComponents();
-
-    inject([OverlayContainer], (oc: OverlayContainer) => {
-      overlayContainer = oc;
-      overlayContainerElement = oc.getContainerElement();
-    })();
-    MockNgRedux.reset();
-  });
-  beforeEach(() => {
+  }));
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(componentUT);
     component = fixture.componentInstance;
+    loader = TestbedHarnessEnvironment.loader(fixture);
+  }));
 
-    inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
-  });
+  it('should update via input event', fakeAsync(async () => {
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
 
-  afterEach(inject(
-    [OverlayContainer],
-    (currentOverlayContainer: OverlayContainer) => {
-      // Since we're resetting the testing module in some of the tests,
-      // we can potentially have multiple overlay containers.
-      currentOverlayContainer.ngOnDestroy();
-      overlayContainer.ngOnDestroy();
-    }
-  ));
-  it('should update via input event', fakeAsync(() => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    mockSubStore.complete();
-    fixture.detectChanges();
     component.ngOnInit();
+    fixture.detectChanges();
 
     const spy = spyOn(component, 'onSelect');
 
-    inputElement.focus();
-    zone.simulateZoneExit();
+    await (await loader.getHarness(MatAutocompleteHarness)).focus();
     fixture.detectChanges();
 
-    const options = overlayContainerElement.querySelectorAll(
-      'mat-option'
-    ) as NodeListOf<HTMLElement>;
-    options[1].click();
+    await (
+      await loader.getHarness(MatAutocompleteHarness)
+    ).selectOption({ text: 'B' });
     tick();
     fixture.detectChanges();
 
@@ -267,65 +253,66 @@ describe('AutoComplete control Input Event Tests', () => {
 
     expect(event.option.value).toBe('B');
   }));
-  it('options should prefer own props', fakeAsync(() => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
+  it('options should prefer own props', fakeAsync(async () => {
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
     component.options = ['X', 'Y', 'Z'];
-    mockSubStore.complete();
-    fixture.detectChanges();
-    component.ngOnInit();
 
+    component.ngOnInit();
+    fixture.detectChanges();
     const spy = spyOn(component, 'onSelect');
 
-    inputElement.focus();
-    zone.simulateZoneExit();
+    await (await loader.getHarness(MatAutocompleteHarness)).focus();
     fixture.detectChanges();
 
-    const options = overlayContainerElement.querySelectorAll(
-      'mat-option'
-    ) as NodeListOf<HTMLElement>;
-    options[0].click();
+    await (
+      await loader.getHarness(MatAutocompleteHarness)
+    ).selectOption({ text: 'Y' });
+    fixture.detectChanges();
     tick();
-    fixture.detectChanges();
 
-    expect(spy).toHaveBeenCalled();
     const event = spy.calls.mostRecent()
       .args[0] as MatAutocompleteSelectedEvent;
-
-    expect(event.option.value).toBe('X');
+    expect(event.option.value).toBe('Y');
   }));
 });
 describe('AutoComplete control Error Tests', () => {
   let fixture: ComponentFixture<AutocompleteControlRenderer>;
   let component: AutocompleteControlRenderer;
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [componentUT],
       imports: imports,
-      providers: providers
+      providers: providers,
     }).compileComponents();
-
-    MockNgRedux.reset();
-  });
+  }));
   beforeEach(() => {
     fixture = TestBed.createComponent(componentUT);
     component = fixture.componentInstance;
   });
   it('should display errors', () => {
-    const errors = [
+    const errors: ErrorObject[] = [
       {
-        dataPath: 'foo',
-        message: 'Hi, this is me, test error!'
-      }
+        instancePath: '/foo',
+        message: 'Hi, this is me, test error!',
+        params: {},
+        keyword: '',
+        schemaPath: '',
+      },
     ];
-    const mockSubStore = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       uischema,
       schema,
       data,
-      errors
     });
-    mockSubStore.complete();
-    fixture.detectChanges();
+    const formsService = getJsonFormsService(component);
+    formsService.updateCore(Actions.updateErrors(errors));
+    formsService.refresh();
+
     component.ngOnInit();
+    fixture.detectChanges();
     const debugErrors: DebugElement[] = fixture.debugElement.queryAll(
       By.directive(errorTest.errorInstance)
     );
@@ -333,5 +320,53 @@ describe('AutoComplete control Error Tests', () => {
     expect(
       debugErrors[errorTest.indexOfElement].nativeElement.textContent
     ).toBe('Hi, this is me, test error!');
+  });
+});
+
+describe('AutoComplete control updateFilter function', () => {
+  let fixture: ComponentFixture<AutocompleteControlRenderer>;
+  let component: AutocompleteControlRenderer;
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [componentUT],
+      imports: imports,
+      providers: providers,
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(componentUT);
+    component = fixture.componentInstance;
+  });
+
+  it('should not filter options on ENTER key press', () => {
+    component.shouldFilter = false;
+    component.options = ['X', 'Y', 'Z'];
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
+    component.ngOnInit();
+    fixture.detectChanges();
+    component.updateFilter({ keyCode: 13 });
+    fixture.detectChanges();
+    expect(component.shouldFilter).toBe(false);
+  });
+
+  it('should filter options when a key other than ENTER is pressed', () => {
+    component.shouldFilter = false;
+    component.options = ['X', 'Y', 'Z'];
+    setupMockStore(fixture, { uischema, schema, data });
+    getJsonFormsService(component).updateCore(
+      Actions.init(data, schema, uischema)
+    );
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    component.updateFilter({ keyCode: 65 });
+    fixture.detectChanges();
+
+    expect(component.shouldFilter).toBe(true);
   });
 });

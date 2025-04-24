@@ -22,57 +22,49 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+
 import maxBy from 'lodash/maxBy';
 import remove from 'lodash/remove';
-import {
-  ADD_UI_SCHEMA,
-  AddUISchemaAction,
-  REMOVE_UI_SCHEMA,
-  RemoveUISchemaAction
-} from '../actions';
-import { JsonSchema, NOT_APPLICABLE, UISchemaElement } from '..';
+import { ADD_UI_SCHEMA, REMOVE_UI_SCHEMA, UISchemaActions } from '../actions';
+import { NOT_APPLICABLE } from '../testers';
+import type { JsonSchema, UISchemaElement } from '../models';
+import type { Reducer } from '../store/type';
+import { JsonFormsUISchemaRegistryEntry } from '../store';
 
-export type UISchemaTester = (
-  schema: JsonSchema,
-  schemaPath: string,
-  path: string
-) => number;
-
-type ValidUISchemaReducerActions = AddUISchemaAction | RemoveUISchemaAction;
-
-export const uischemaRegistryReducer = (
-  state: { tester: UISchemaTester; uischema: UISchemaElement }[] = [],
-  action: ValidUISchemaReducerActions
-) => {
+export const uischemaRegistryReducer: Reducer<
+  JsonFormsUISchemaRegistryEntry[],
+  UISchemaActions
+> = (state = [], action) => {
   switch (action.type) {
     case ADD_UI_SCHEMA:
       return state
         .slice()
         .concat({ tester: action.tester, uischema: action.uischema });
-    case REMOVE_UI_SCHEMA:
+    case REMOVE_UI_SCHEMA: {
       const copy = state.slice();
-      remove(copy, entry => entry.tester === action.tester);
+      remove(copy, (entry) => entry.tester === action.tester);
       return copy;
+    }
     default:
       return state;
   }
 };
 
-export const findMatchingUISchema = (
-  state: { tester: UISchemaTester; uischema: UISchemaElement }[]
-) => (
-  jsonSchema: JsonSchema,
-  schemaPath: string,
-  path: string
-): UISchemaElement => {
-  const match = maxBy(state, entry =>
-    entry.tester(jsonSchema, schemaPath, path)
-  );
-  if (
-    match !== undefined &&
-    match.tester(jsonSchema, schemaPath, path) !== NOT_APPLICABLE
-  ) {
-    return match.uischema;
-  }
-  return undefined;
-};
+export const findMatchingUISchema =
+  (state: JsonFormsUISchemaRegistryEntry[]) =>
+  (
+    jsonSchema: JsonSchema,
+    schemaPath: string,
+    path: string
+  ): UISchemaElement => {
+    const match = maxBy(state, (entry) =>
+      entry.tester(jsonSchema, schemaPath, path)
+    );
+    if (
+      match !== undefined &&
+      match.tester(jsonSchema, schemaPath, path) !== NOT_APPLICABLE
+    ) {
+      return match.uischema;
+    }
+    return undefined;
+  };

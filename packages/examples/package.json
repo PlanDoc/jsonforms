@@ -1,6 +1,6 @@
 {
   "name": "@jsonforms/examples",
-  "version": "2.3.2",
+  "version": "3.6.0-alpha.0",
   "description": "JSON Forms Example Data",
   "repository": "https://github.com/eclipsesource/jsonforms",
   "bugs": "https://github.com/eclipsesource/jsonforms/issues",
@@ -16,18 +16,56 @@
     "src": "src",
     "test": "wct-test"
   },
-  "main": "./lib/index.js",
+  "keywords": [
+    "form",
+    "forms",
+    "json",
+    "jsonforms",
+    "frontend",
+    "generator",
+    "input",
+    "renderengine",
+    "jsonschema",
+    "schema",
+    "uischema",
+    "layout",
+    "customization"
+  ],
+  "main": "lib/jsonforms-examples.cjs.js",
+  "module": "lib/jsonforms-examples.esm.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "../../node_modules/.bin/tsc",
-    "clean": "rm -rf lib coverage dist .nyc_output 2> /dev/null",
-    "lint": "../../node_modules/.bin/tslint --project ../../tslint.json --exclude src/models/jsonSchema.ts",
+    "build": "rollup -c rollup.config.js",
+    "clean": "rimraf lib coverage dist .nyc_output 2> /dev/null",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "test": "echo 'Nothing to do for `examples` package'",
-    "doc": "../../node_modules/.bin/typedoc --name 'JSON Forms Examples' --mode file --excludeExternals --theme ../../typedoc-jsonforms --out docs src"
+    "doc": "typedoc --name 'JSON Forms Examples' --excludeExternals --out docs src"
   },
   "dependencies": {
-    "@jsonforms/core": "^2.3.2",
-    "ajv-i18n": "^3.5.0",
-    "redux": "^4.0.4"
+    "ajv-i18n": "^4.2.0",
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "@jsonforms/core": "3.6.0-alpha.0"
+  },
+  "devDependencies": {
+    "@jsonforms/core": "workspace:*",
+    "@types/node": "^22.13.8",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.4",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.78.0",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "rollup-plugin-visualizer": "^5.4.1",
+    "tslib": "^2.5.0",
+    "typedoc": "~0.25.3",
+    "typescript": "~5.5.0"
   }
 }

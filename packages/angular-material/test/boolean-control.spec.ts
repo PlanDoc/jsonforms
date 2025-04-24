@@ -22,49 +22,47 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux } from '@angular-redux/store';
-import { MockNgRedux } from '@angular-redux/store/testing';
-import {
-  MatCheckbox,
-  MatCheckboxModule,
-  MatError,
-  MatFormFieldModule
-} from '@angular/material';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import {
   booleanBaseTest,
   booleanErrorTest,
   booleanInputEventTest,
-  ErrorTestExpectation
-} from '@jsonforms/angular-test';
+  ErrorTestExpectation,
+} from './common';
 import { BooleanControlRenderer, booleanControlTester } from '../src';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { JsonFormsAngularService } from '@jsonforms/angular';
 
 describe('Material boolean field tester', () => {
   const uischema = {
     type: 'Control',
-    scope: '#/properties/foo'
+    scope: '#/properties/foo',
   };
 
   it('should succeed', () => {
     expect(
-      booleanControlTester(uischema, {
-        type: 'object',
-        properties: {
-          foo: {
-            type: 'boolean'
-          }
-        }
-      })
+      booleanControlTester(
+        uischema,
+        {
+          type: 'object',
+          properties: {
+            foo: {
+              type: 'boolean',
+            },
+          },
+        },
+        undefined
+      )
     ).toBe(2);
   });
 });
-const imports = [MatCheckboxModule, MatFormFieldModule, FlexLayoutModule];
-const providers = [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }];
+const imports = [MatCheckboxModule, MatFormFieldModule];
+const providers = [JsonFormsAngularService];
 const componentUT: any = BooleanControlRenderer;
 const errorTest: ErrorTestExpectation = {
   errorInstance: MatError,
   numberOfElements: 1,
-  indexOfElement: 0
+  indexOfElement: 0,
 };
 const testConfig = { imports, providers, componentUT };
 describe(

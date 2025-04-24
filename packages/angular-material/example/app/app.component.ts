@@ -1,19 +1,19 @@
 /*
   The MIT License
-  
-  Copyright (c) 2017-2019 EclipseSource Munich
+
+  Copyright (c) 2017-2020 EclipseSource Munich
   https://github.com/eclipsesource/jsonforms
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
+
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,28 +22,47 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux, select } from '@angular-redux/store';
 import { Component } from '@angular/core';
+import { ExampleDescription, getExamples } from '@jsonforms/examples';
 import {
-  Actions,
-  getUiSchema,
-  JsonFormsState,
-  setLocale,
-  setReadonly,
-  unsetReadonly
+  JsonFormsI18nState,
+  UISchemaElement,
+  UISchemaTester,
 } from '@jsonforms/core';
-import { ExampleDescription } from '@jsonforms/examples';
-import { Observable } from 'rxjs';
+import { angularMaterialRenderers } from '../../lib';
+
+const uiSchema = {
+  type: 'HorizontalLayout',
+  elements: [
+    {
+      type: 'Control',
+      scope: '#/properties/buyer/properties/email',
+    },
+    {
+      type: 'Control',
+      scope: '#/properties/status',
+    },
+  ],
+};
+const defaultI18n: JsonFormsI18nState = {
+  locale: 'en-US',
+};
+const itemTester: UISchemaTester = (_schema, schemaPath, _path) => {
+  if (schemaPath === '#/properties/warehouseitems/items') {
+    return 10;
+  }
+  return -1;
+};
 @Component({
   selector: 'app-root',
   template: `
     <h1>Angular Material Examples</h1>
-    Data: <print-redux></print-redux>
+    Data: {{ selectedExample.data | json }}
     <div>
       Example:
       <select (change)="onChange($event)">
         <option
-          *ngFor="let example of exampleData$ | async"
+          *ngFor="let example of examples"
           value="{{ example.name }}"
           label="{{ example.label }}"
         >
@@ -54,52 +73,50 @@ import { Observable } from 'rxjs';
     <div>
       <button (click)="changeLocale('de-DE')">Change locale to de-DE</button>
       <button (click)="changeLocale('en-US')">Change locale to en-US</button>
-      Current locale: {{ currentLocale }}
-      <button (click)="setReadonly()">
+      Current locale: {{ i18n.locale }}
+      <button (click)="toggleReadonly()">
         {{ readonly ? 'Unset' : 'Set' }} Readonly
       </button>
     </div>
-    <jsonforms-outlet></jsonforms-outlet>
-  `
+    <jsonforms
+      [(data)]="selectedExample.data"
+      [schema]="selectedExample.schema"
+      [uischema]="selectedExample.uischema"
+      [renderers]="renderers"
+      [i18n]="i18n"
+      [readonly]="readonly"
+    ></jsonforms>
+  `,
+  standalone: false,
 })
 export class AppComponent {
-  @select(['examples', 'data']) readonly exampleData$: Observable<any>;
-  currentLocale = 'en-US';
-  private readonly = false;
+  readonly renderers = angularMaterialRenderers;
+  readonly examples = getExamples();
+  selectedExample: ExampleDescription | undefined;
+  i18n: JsonFormsI18nState;
+  readonly = false;
+  data: any;
+  uischemas: { tester: UISchemaTester; uischema: UISchemaElement }[] = [
+    { tester: itemTester, uischema: uiSchema },
+  ];
 
-  constructor(
-    private ngRedux: NgRedux<
-      JsonFormsState & { examples: { data: ExampleDescription[] } }
-    >
-  ) {}
-
-  onChange = (ev: any) => {
-    const selectedExample = this.ngRedux
-      .getState()
-      .examples.data.find(e => e.name === ev.target.value);
-    this.ngRedux.dispatch(
-      Actions.init(
-        selectedExample.data,
-        selectedExample.schema,
-        selectedExample.uischema
-      )
-    );
-    this.ngRedux.dispatch(setLocale(this.currentLocale));
-  };
-
-  changeLocale(locale: string) {
-    this.currentLocale = locale;
-    this.ngRedux.dispatch(setLocale(locale));
+  constructor() {
+    this.selectedExample = this.examples[19];
+    this.i18n = this.selectedExample.i18n ?? defaultI18n;
   }
 
-  setReadonly() {
-    const uischema = getUiSchema(this.ngRedux.getState());
-    if (this.readonly) {
-      unsetReadonly(uischema);
-    } else {
-      setReadonly(uischema);
-    }
+  onChange(ev: any) {
+    this.selectedExample = this.examples.find(
+      (e) => e.name === ev.target.value
+    );
+    this.i18n = this.selectedExample?.i18n ?? defaultI18n;
+  }
+
+  changeLocale(locale: string) {
+    this.i18n = { ...this.i18n, locale };
+  }
+
+  toggleReadonly() {
     this.readonly = !this.readonly;
-    this.ngRedux.dispatch(Actions.setUISchema(uischema));
   }
 }

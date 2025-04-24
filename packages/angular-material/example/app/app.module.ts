@@ -1,7 +1,7 @@
 /*
   The MIT License
 
-  Copyright (c) 2017-2019 EclipseSource Munich
+  Copyright (c) 2017-2020 EclipseSource Munich
   https://github.com/eclipsesource/jsonforms
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,69 +23,19 @@
   THE SOFTWARE.
 */
 import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, isDevMode, NgModule } from '@angular/core';
-import { DevToolsExtension, NgRedux } from '@angular-redux/store';
-import { Actions, JsonFormsState, UISchemaTester } from '@jsonforms/core';
-import { LocaleValidationModule, TranslationModule } from 'angular-l10n';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { JsonFormsAngularMaterialModule } from '../../src/module';
-
-import { initialState, rootReducer } from './store';
-import { ReduxComponent } from './redux.component';
-import logger from 'redux-logger';
+import { JsonFormsAngularMaterialModule } from '../../lib';
 
 @NgModule({
-  declarations: [AppComponent, ReduxComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     JsonFormsAngularMaterialModule,
-    TranslationModule.forRoot({}),
-    LocaleValidationModule.forRoot()
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {
-  constructor(ngRedux: NgRedux<JsonFormsState>, devTools: DevToolsExtension) {
-    let enhancers: any[] = [];
-    // ... add whatever other enhancers you want.
-
-    // You probably only want to expose this tool in devMode.
-    if (isDevMode() && devTools.isEnabled()) {
-      enhancers = [...enhancers, devTools.enhancer()];
-    }
-
-    ngRedux.configureStore(rootReducer, initialState, [logger], enhancers);
-    const example = initialState.examples.data[0];
-    ngRedux.dispatch(
-      Actions.init(example.data, example.schema, example.uischema)
-    );
-
-    const uiSchema = {
-      type: 'HorizontalLayout',
-      elements: [
-        {
-          type: 'Control',
-          scope: '#/properties/buyer/properties/email'
-        },
-        {
-          type: 'Control',
-          scope: '#/properties/status'
-        }
-      ]
-    };
-    const itemTester: UISchemaTester = (_schema, schemaPath, _path) => {
-      if (schemaPath === '#/properties/warehouseitems/items') {
-        return 10;
-      }
-      return -1;
-    };
-    ngRedux.dispatch(Actions.registerUISchema(itemTester, uiSchema));
-  }
-}
-
-/*
-Copyright 2017-2018 Google Inc. All Rights Reserved.
-Use of this source code is governed by an MIT-style license that
-can be found in the LICENSE file at http://angular.io/license
-*/
+export class AppModule {}

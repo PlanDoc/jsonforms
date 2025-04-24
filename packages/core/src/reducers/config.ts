@@ -22,16 +22,18 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+
 import merge from 'lodash/merge';
 import { SET_CONFIG, SetConfigAction } from '../actions';
 import { configDefault } from '../configDefault';
+import { Reducer } from '../store';
 
 const applyDefaultConfiguration = (config: any = {}) =>
   merge({}, configDefault, config);
 
-export const configReducer = (
+export const configReducer: Reducer<any, SetConfigAction> = (
   state = applyDefaultConfiguration(),
-  action: SetConfigAction
+  action
 ) => {
   switch (action.type) {
     case SET_CONFIG:

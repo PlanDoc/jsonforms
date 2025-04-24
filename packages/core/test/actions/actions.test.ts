@@ -28,56 +28,56 @@ import {
   JsonSchema,
   UISchemaElement,
   ControlElement,
-  VerticalLayout
+  VerticalLayout,
 } from '../../src';
 
-test('Init Action generates schema when not provided', t => {
+test('Init Action generates schema when not provided', (t) => {
   const schema: JsonSchema = {
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     additionalProperties: true,
-    required: ['name']
+    required: ['name'],
   };
 
   const init = Actions.init({ name: 'foobar' });
   t.deepEqual(init.schema, schema);
 });
 
-test('Init Action generates ui schema when not provided', t => {
+test('Init Action generates ui schema when not provided', (t) => {
   const schema: JsonSchema = {
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
-    }
+        type: 'string',
+      },
+    },
   };
   const uischema: VerticalLayout = {
     type: 'VerticalLayout',
     elements: [
       {
         type: 'Control',
-        scope: '#/properties/name'
-      } as ControlElement
-    ]
+        scope: '#/properties/name',
+      } as ControlElement,
+    ],
   };
 
   const init = Actions.init({}, schema);
   t.deepEqual(init.uischema, uischema);
 });
 
-test('Init Action generates ui schema when not valid', t => {
+test('Init Action generates ui schema when not valid', (t) => {
   const schema: JsonSchema = {
     type: 'object',
     properties: {
       name: {
-        type: 'string'
-      }
-    }
+        type: 'string',
+      },
+    },
   };
 
   const init = Actions.init({}, schema, false as any);
@@ -86,8 +86,78 @@ test('Init Action generates ui schema when not valid', t => {
     elements: [
       {
         type: 'Control',
-        scope: '#/properties/name'
-      }
-    ]
+        scope: '#/properties/name',
+      },
+    ],
   } as UISchemaElement);
+});
+
+test('isUpdateArrayContext correctly identifies ', (t) => {
+  t.deepEqual(Actions.isUpdateArrayContext({}), false);
+  t.deepEqual(Actions.isUpdateArrayContext({ type: 'ADD' }), false);
+  t.deepEqual(Actions.isUpdateArrayContext({ type: 'ADD', values: [] }), false);
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'ADD', values: [0, ''] }),
+    true
+  );
+
+  t.deepEqual(Actions.isUpdateArrayContext({ type: 'REMOVE' }), false);
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'REMOVE', indices: [] }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'REMOVE', indices: [0, ''] }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'REMOVE', indices: [0, 2] }),
+    true
+  );
+
+  t.deepEqual(Actions.isUpdateArrayContext({ type: 'MOVE' }), false);
+  t.deepEqual(Actions.isUpdateArrayContext({ type: 'MOVE', moves: [] }), false);
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'MOVE', moves: [0] }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'MOVE', moves: [null] }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({
+      type: 'MOVE',
+      moves: [{ from: 0, to: 1 }, { from: 2 }],
+    }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({
+      type: 'MOVE',
+      moves: [{ from: 0, to: 1 }, { to: 0 }],
+    }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({
+      type: 'MOVE',
+      moves: [{ from: 0, to: '' }],
+    }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({
+      type: 'MOVE',
+      moves: [
+        { from: 0, to: 1 },
+        { from: 0, to: '' },
+      ],
+    }),
+    false
+  );
+  t.deepEqual(
+    Actions.isUpdateArrayContext({ type: 'MOVE', moves: [{ from: 0, to: 1 }] }),
+    true
+  );
 });

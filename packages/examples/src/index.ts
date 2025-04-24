@@ -1,7 +1,7 @@
 /*
   The MIT License
 
-  Copyright (c) 2017-2019 EclipseSource Munich
+  Copyright (c) 2017-2021 EclipseSource Munich
   https://github.com/eclipsesource/jsonforms
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,74 +22,87 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import * as allOf from './allOf';
-import * as anyOf from './anyOf';
-import * as oneOf from './oneOf';
-import * as oneOfArray from './oneOfArray';
-import * as array from './arrays';
-import * as nestedArray from './nestedArrays';
-import * as arrayWithDetail from './arrays-with-detail';
-import * as arrayWithDetailAndRule from './arrays-with-detail-and-rule';
-import * as arrayWithCustomChildLabel from './arrays-with-custom-element-label';
-import * as stringArray from './stringArray';
-import * as categorization from './categorization';
-import * as stepper from './stepper';
-import * as day1 from './day1';
-import * as day2 from './day2';
-import * as day3 from './day3';
-import * as day4 from './day4';
-import * as day5 from './day5';
-import * as day6 from './day6';
-import * as dates from './dates';
-import * as dyanmic from './dynamic';
-import * as generateSchema from './generate';
-import * as generateUISchema from './generateUI';
-import * as layout from './layout';
-import * as person from './person';
-import * as rule from './rule';
-import * as ruleInheritance from './ruleInheritance';
-import * as resolve from './resolve';
-import * as config from './config';
-import * as text from './text';
-import * as numbers from './numbers';
-import * as scope from './scope';
-import * as listWithDetail from './list-with-detail';
-import * as listWithDetailRegistered from './list-with-detail-registered';
-import * as object from './object';
-import * as i18n from './i18n';
-import * as issue_1169 from './1169';
-import * as issue_1220 from './1220';
-import * as issue_1253 from './1253';
-import * as issue_1254 from './1254';
-import * as oneOfRecursive from './oneOf-recursive';
-import * as huge from './huge';
-import * as defaultExample from './default';
-import * as onChange from './onChange';
+import * as allOf from './examples/allOf';
+import * as anyOf from './examples/anyOf';
+import * as oneOf from './examples/oneOf';
+import * as oneOfArray from './examples/oneOfArray';
+import * as anyOfOneOfAllOfResolve from './examples/anyOf-oneOf-allOf-resolve';
+import * as array from './examples/arrays';
+import * as arrayI18n from './examples/arraysI18n';
+import * as nestedArray from './examples/nestedArrays';
+import * as nestedCategorization from './examples/nestedCategorization';
+import * as arrayWithDetail from './examples/arrays-with-detail';
+import * as arrayWithDetailAndRule from './examples/arrays-with-detail-and-rule';
+import * as arrayWithCustomChildLabel from './examples/arrays-with-custom-element-label';
+import * as arrayWithSorting from './examples/arrays-with-sorting';
+import * as arrayWithTranslatedCustomChildLabel from './examples/arrays-with-translated-custom-element-label';
+import * as arrayWithDefaults from './examples/arrays-with-defaults';
+import * as stringArray from './examples/stringArray';
+import * as categorization from './examples/categorization';
+import * as stepper from './examples/categorization-stepper';
+import * as steppershownav from './examples/categorization-stepper-nav-buttons';
+import * as controlOptions from './examples/control-options';
+import * as dates from './examples/dates';
+import * as generateDynamic from './examples/generate-dynamic';
+import * as generateSchema from './examples/generate';
+import * as generateUISchema from './examples/generateUI';
+import * as layout from './examples/layout';
+import * as person from './examples/person';
+import * as issue_1884 from './examples/1884';
+import * as rule from './examples/rule';
+import * as ruleInheritance from './examples/ruleInheritance';
+import * as config from './examples/config';
+import * as text from './examples/text';
+import * as numbers from './examples/numbers';
+import * as scope from './examples/scope';
+import * as listWithDetail from './examples/list-with-detail';
+import * as listWithDetailRegistered from './examples/list-with-detail-registered';
+import * as object from './examples/object';
+import * as i18n from './examples/i18n';
+import * as issue_1948 from './examples/1948';
+import * as oneOfRecursive from './examples/oneOf-recursive';
+import * as huge from './examples/huge';
+import * as defaultExample from './examples/default';
+import * as onChange from './examples/onChange';
+import * as enumExample from './examples/enum';
+import * as radioGroupExample from './examples/radioGroup';
+import * as multiEnum from './examples/enum-multi';
+import * as enumInArray from './examples/enumInArray';
+import * as readonly from './examples/readonly';
+import * as listWithDetailPrimitives from './examples/list-with-detail-primitives';
+import * as conditionalSchemaComposition from './examples/conditional-schema-compositions';
+import * as additionalErrors from './examples/additional-errors';
+import * as multiEnumWithLabelAndDesc from './examples/enum-multi-with-label-and-desc';
+import * as additionalProperties from './examples/additional-properties';
+import * as login from './examples/login';
+import * as string from './examples/string';
 export * from './register';
 export * from './example';
 
-import * as ifThenElse from './if_then_else';
+import * as ifThenElse from './examples/if_then_else';
 
 export {
+  issue_1948,
   defaultExample,
   allOf,
   anyOf,
   oneOf,
   oneOfArray,
+  anyOfOneOfAllOfResolve,
   stringArray,
   array,
+  arrayI18n,
   nestedArray,
+  nestedCategorization,
   arrayWithDetail,
   arrayWithDetailAndRule,
   arrayWithCustomChildLabel,
+  arrayWithSorting,
+  arrayWithTranslatedCustomChildLabel,
   categorization,
   stepper,
-  day1,
-  day2,
-  day3,
-  day4,
-  day5,
-  day6,
+  steppershownav,
+  controlOptions,
   generateSchema,
   generateUISchema,
   layout,
@@ -97,8 +110,7 @@ export {
   rule,
   ruleInheritance,
   dates,
-  dyanmic,
-  resolve,
+  generateDynamic,
   config,
   text,
   numbers,
@@ -107,12 +119,22 @@ export {
   listWithDetailRegistered,
   object,
   i18n,
-  issue_1169,
-  issue_1220,
-  issue_1253,
-  issue_1254,
   oneOfRecursive,
   huge,
   ifThenElse,
-  onChange
+  onChange,
+  enumExample,
+  radioGroupExample,
+  multiEnum,
+  multiEnumWithLabelAndDesc,
+  enumInArray,
+  readonly,
+  listWithDetailPrimitives,
+  conditionalSchemaComposition,
+  additionalErrors,
+  additionalProperties,
+  login,
+  issue_1884,
+  arrayWithDefaults,
+  string,
 };

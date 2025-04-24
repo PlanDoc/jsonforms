@@ -22,46 +22,44 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { UISchemaElement, VerticalLayout } from '@jsonforms/core';
-import {
-  beforeEachLayoutTest,
-  initComponent,
-  setupMockStore
-} from '@jsonforms/angular-test';
-import { Subject } from 'rxjs';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { beforeEachLayoutTest, setupMockStore } from './common';
 import {
   VerticalLayoutRenderer,
-  verticalLayoutTester
-} from '../src/layouts/vertical-layout.renderer';
+  verticalLayoutTester,
+} from '../src/library/layouts/vertical-layout.renderer';
+import { LayoutChildrenRenderPropsPipe } from '../src/library/layouts/layout.renderer';
 
 describe('Vertical layout tester', () => {
   it('should succeed', () => {
-    expect(verticalLayoutTester({ type: 'VerticalLayout' }, undefined)).toBe(1);
+    expect(
+      verticalLayoutTester({ type: 'VerticalLayout' }, undefined, undefined)
+    ).toBe(1);
   });
 });
 describe('Vertical layout', () => {
   let fixture: ComponentFixture<any>;
   let component: any;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = beforeEachLayoutTest(VerticalLayoutRenderer, {
-      imports: [FlexLayoutModule]
+      declarations: [LayoutChildrenRenderPropsPipe],
     });
     component = fixture.componentInstance;
-  });
+  }));
 
   it('render with undefined elements', () => {
     const uischema: UISchemaElement = {
-      type: 'VerticalLayout'
+      type: 'VerticalLayout',
     };
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(0);
     // the component is wrapped in a div
     expect(fixture.nativeElement.children[0].style.display).not.toBe('none');
@@ -70,29 +68,31 @@ describe('Vertical layout', () => {
   it('render with null elements', () => {
     const uischema: VerticalLayout = {
       type: 'VerticalLayout',
-      elements: null
+      elements: null,
     };
 
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(0);
   });
 
   it('render with children', () => {
     const uischema: VerticalLayout = {
       type: 'VerticalLayout',
-      elements: [{ type: 'Control' }, { type: 'Control' }]
+      elements: [{ type: 'Control' }, { type: 'Control' }],
     };
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(2);
     expect(fixture.nativeElement.children[0].hidden).toBe(false);
   });
@@ -101,15 +101,14 @@ describe('Vertical layout', () => {
   xit('can be hidden', () => {
     const uischema: VerticalLayout = {
       type: 'VerticalLayout',
-      elements: [{ type: 'Control' }, { type: 'Control' }]
+      elements: [{ type: 'Control' }, { type: 'Control' }],
     };
     component.visible = false;
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    mockSubStore.complete();
     component.ngOnInit();
     expect(fixture.nativeElement.children[0].style.display).toBe('none');
   });

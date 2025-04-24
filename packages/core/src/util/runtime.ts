@@ -22,6 +22,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+
 import has from 'lodash/has';
 import {
   AndCondition,
@@ -31,13 +32,11 @@ import {
   RuleEffect,
   SchemaBasedCondition,
   Scopable,
-  UISchemaElement
-} from '../models/uischema';
+  UISchemaElement,
+} from '../models';
 import { resolveData } from './resolvers';
-import { composeWithUi } from './path';
-import { createAjv } from './validator';
-
-const ajv = createAjv();
+import type Ajv from 'ajv';
+import { composeWithUi } from './uischema';
 
 const isOrCondition = (condition: Condition): condition is OrCondition =>
   condition.type === 'OR';
@@ -59,16 +58,17 @@ const getConditionScope = (condition: Scopable, path: string): string => {
 const evaluateCondition = (
   data: any,
   condition: Condition,
-  path: string
+  path: string,
+  ajv: Ajv
 ): boolean => {
   if (isAndCondition(condition)) {
     return condition.conditions.reduce(
-      (acc, cur) => acc && evaluateCondition(data, cur, path),
+      (acc, cur) => acc && evaluateCondition(data, cur, path, ajv),
       true
     );
   } else if (isOrCondition(condition)) {
     return condition.conditions.reduce(
-      (acc, cur) => acc || evaluateCondition(data, cur, path),
+      (acc, cur) => acc || evaluateCondition(data, cur, path, ajv),
       false
     );
   } else if (isLeafCondition(condition)) {
@@ -76,6 +76,9 @@ const evaluateCondition = (
     return value === condition.expectedValue;
   } else if (isSchemaCondition(condition)) {
     const value = resolveData(data, getConditionScope(condition, path));
+    if (condition.failWhenUndefined && value === undefined) {
+      return false;
+    }
     return ajv.validate(condition.schema, value) as boolean;
   } else {
     // unknown condition
@@ -86,18 +89,20 @@ const evaluateCondition = (
 const isRuleFulfilled = (
   uischema: UISchemaElement,
   data: any,
-  path: string
+  path: string,
+  ajv: Ajv
 ): boolean => {
   const condition = uischema.rule.condition;
-  return evaluateCondition(data, condition, path);
+  return evaluateCondition(data, condition, path, ajv);
 };
 
 export const evalVisibility = (
   uischema: UISchemaElement,
   data: any,
-  path: string = undefined
+  path: string = undefined,
+  ajv: Ajv
 ): boolean => {
-  const fulfilled = isRuleFulfilled(uischema, data, path);
+  const fulfilled = isRuleFulfilled(uischema, data, path, ajv);
 
   switch (uischema.rule.effect) {
     case RuleEffect.HIDE:
@@ -113,9 +118,10 @@ export const evalVisibility = (
 export const evalEnablement = (
   uischema: UISchemaElement,
   data: any,
-  path: string = undefined
+  path: string = undefined,
+  ajv: Ajv
 ): boolean => {
-  const fulfilled = isRuleFulfilled(uischema, data, path);
+  const fulfilled = isRuleFulfilled(uischema, data, path, ajv);
 
   switch (uischema.rule.effect) {
     case RuleEffect.DISABLE:
@@ -153,10 +159,11 @@ export const hasEnableRule = (uischema: UISchemaElement): boolean => {
 export const isVisible = (
   uischema: UISchemaElement,
   data: any,
-  path: string = undefined
+  path: string = undefined,
+  ajv: Ajv
 ): boolean => {
   if (uischema.rule) {
-    return evalVisibility(uischema, data, path);
+    return evalVisibility(uischema, data, path, ajv);
   }
 
   return true;
@@ -165,10 +172,11 @@ export const isVisible = (
 export const isEnabled = (
   uischema: UISchemaElement,
   data: any,
-  path: string = undefined
+  path: string = undefined,
+  ajv: Ajv
 ): boolean => {
   if (uischema.rule) {
-    return evalEnablement(uischema, data, path);
+    return evalEnablement(uischema, data, path, ajv);
   }
 
   return true;

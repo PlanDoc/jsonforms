@@ -22,45 +22,40 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { GroupLayout, UISchemaElement } from '@jsonforms/core';
-import { MatCard, MatCardTitle } from '@angular/material';
+import { MatCard, MatCardTitle } from '@angular/material/card';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-import {
-  beforeEachLayoutTest,
-  initComponent,
-  setupMockStore
-} from '@jsonforms/angular-test';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { beforeEachLayoutTest, setupMockStore } from './common';
+import { LayoutChildrenRenderPropsPipe } from '../src/library/layouts/layout.renderer';
 import {
   GroupLayoutRenderer,
-  groupLayoutTester
-} from '../src/layouts/group-layout.renderer';
+  groupLayoutTester,
+} from '../src/library/layouts/group-layout.renderer';
 
 describe('Group layout tester', () => {
   it('should succeed', () => {
-    expect(groupLayoutTester({ type: 'Group' }, undefined)).toBe(1);
+    expect(groupLayoutTester({ type: 'Group' }, undefined, undefined)).toBe(1);
   });
 });
 describe('Group layout', () => {
   let fixture: ComponentFixture<any>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = beforeEachLayoutTest(GroupLayoutRenderer, {
-      declarations: [MatCard, MatCardTitle],
-      imports: [FlexLayoutModule]
+      declarations: [LayoutChildrenRenderPropsPipe],
+      imports: [MatCard, MatCardTitle],
     });
-  });
+  }));
 
   it('render with undefined elements', () => {
     const uischema: UISchemaElement = {
-      type: 'Group'
+      type: 'Group',
     };
-    initComponent(
-      fixture,
-      setupMockStore(fixture, { data: {}, schema: {}, uischema })
-    );
+    setupMockStore(fixture, { data: {}, schema: {}, uischema });
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     const card: DebugElement[] = fixture.debugElement.queryAll(
       By.directive(MatCard)
     );
@@ -71,12 +66,11 @@ describe('Group layout', () => {
   it('render with null elements', () => {
     const uischema: GroupLayout = {
       type: 'Group',
-      elements: null
+      elements: null,
     };
-    initComponent(
-      fixture,
-      setupMockStore(fixture, { data: {}, schema: {}, uischema })
-    );
+    setupMockStore(fixture, { data: {}, schema: {}, uischema });
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     const card: DebugElement[] = fixture.debugElement.queryAll(
       By.directive(MatCard)
     );
@@ -88,12 +82,11 @@ describe('Group layout', () => {
     const uischema: GroupLayout = {
       type: 'Group',
       label: 'foo',
-      elements: [{ type: 'Control' }, { type: 'Control' }]
+      elements: [{ type: 'Control' }, { type: 'Control' }],
     };
-    initComponent(
-      fixture,
-      setupMockStore(fixture, { data: {}, schema: {}, uischema })
-    );
+    setupMockStore(fixture, { data: {}, schema: {}, uischema });
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     const card: DebugElement[] = fixture.debugElement.queryAll(
       By.directive(MatCard)
     );

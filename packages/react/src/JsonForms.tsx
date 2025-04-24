@@ -22,180 +22,167 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import isEqual from 'lodash/isEqual';
 import maxBy from 'lodash/maxBy';
-import memoize from 'lodash/memoize';
-import React, { useLayoutEffect } from 'react';
-import AJV from 'ajv';
-import RefParser from 'json-schema-ref-parser';
+import React, { ComponentType, useMemo } from 'react';
+import type Ajv from 'ajv';
+import type { ErrorObject } from 'ajv';
 import { UnknownRenderer } from './UnknownRenderer';
 import {
   createId,
-  findRefs,
+  Generate,
   isControl,
+  JsonFormsCellRendererRegistryEntry,
   JsonFormsCore,
+  JsonFormsI18nState,
   JsonFormsProps,
   JsonFormsRendererRegistryEntry,
+  JsonFormsUISchemaRegistryEntry,
   JsonSchema,
+  Middleware,
   OwnPropsOfJsonFormsRenderer,
   removeId,
   UISchemaElement,
-  JsonFormsCellRendererRegistryEntry,
-  Generate
+  ValidationMode,
 } from '@jsonforms/core';
 import {
-  ctxToJsonFormsDispatchProps,
   JsonFormsStateProvider,
-  useJsonForms
+  withJsonFormsRendererProps,
 } from './JsonFormsContext';
-import hash from 'object-hash';
 
 interface JsonFormsRendererState {
   id: string;
-  schema: JsonSchema;
-  resolving: boolean;
-  resolvedSchema: JsonSchema;
 }
 
 export interface JsonFormsReactProps {
   onChange?(state: Pick<JsonFormsCore, 'data' | 'errors'>): void;
+  middleware?: Middleware;
 }
 
-const hasRefs = memoize(
-  (schema: JsonSchema): boolean => {
-    if (schema !== undefined) {
-      return Object.keys(findRefs(schema)).length > 0;
-    }
-    return false;
-  },
-  (schema: JsonSchema) => (schema ? hash(schema) : false)
-);
-
-export class ResolvedJsonFormsDispatchRenderer extends React.Component<
+export class JsonFormsDispatchRenderer extends React.Component<
   JsonFormsProps,
   JsonFormsRendererState
 > {
-  static getDerivedStateFromProps(
-    nextProps: JsonFormsProps,
-    prevState: JsonFormsRendererState
-  ) {
-    if (!isEqual(prevState.schema, nextProps.schema)) {
-      const schemaHasRefs: boolean = hasRefs(nextProps.schema);
-      const newState: JsonFormsRendererState = {
-        id: prevState.id,
-        resolvedSchema: schemaHasRefs ? undefined : nextProps.schema,
-        schema: nextProps.schema,
-        resolving: schemaHasRefs
-      };
-      return newState;
-    }
-
-    return null;
-  }
-
-  mounted = false;
-
   constructor(props: JsonFormsProps) {
     super(props);
     this.state = {
       id: isControl(props.uischema)
         ? createId(props.uischema.scope)
         : undefined,
-      schema: props.schema,
-      resolvedSchema: props.schema,
-      resolving: false
     };
   }
 
-  componentDidMount() {
-    if (this.state.resolving) {
-      this.resolveAndUpdateSchema(this.props);
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.state.resolving) {
-      this.resolveAndUpdateSchema(this.props);
-    }
-  }
-
-  resolveAndUpdateSchema = (props: JsonFormsProps) => {
-    props.refResolver(props.schema).then((resolvedSchema: any) => {
-      this.setState({
-        resolving: false,
-        resolvedSchema: resolvedSchema
-      });
-    });
-  };
-
   componentWillUnmount() {
-    this.mounted = false;
     if (isControl(this.props.uischema)) {
       removeId(this.state.id);
     }
   }
+
+  componentDidUpdate(prevProps: JsonFormsProps) {
+    if (prevProps.schema !== this.props.schema) {
+      removeId(this.state.id);
+      this.setState({
+        id: isControl(this.props.uischema)
+          ? createId(this.props.uischema.scope)
+          : undefined,
+      });
+    }
+  }
+
   render() {
-    const { uischema, path, enabled, renderers } = this.props as JsonFormsProps;
-    const { resolving } = this.state;
-    const _schema = this.state.resolvedSchema;
-
-    if (resolving) {
-      return <div>Loading...</div>;
-    }
-
-    const renderer = maxBy(renderers, r => r.tester(uischema, _schema));
-    if (renderer === undefined || renderer.tester(uischema, _schema) === -1) {
-      return <UnknownRenderer type={'renderer'} />;
-    } else {
-      const Render = renderer.renderer;
-      return (
-        <Render
-          uischema={uischema}
-          schema={_schema}
-          path={path}
-          enabled={enabled}
-          renderers={renderers}
-          id={this.state.id}
-        />
-      );
-    }
-  }
-}
-
-export class JsonFormsDispatchRenderer extends ResolvedJsonFormsDispatchRenderer {
-  constructor(props: JsonFormsProps) {
-    super(props);
-    const isResolved = !hasRefs(props.schema);
-    this.state = {
-      ...this.state,
-      resolvedSchema: isResolved ? props.schema : undefined,
-      resolving: !isResolved
-    };
-  }
-}
-
-export const JsonFormsDispatch = React.memo(
-  (props: OwnPropsOfJsonFormsRenderer & JsonFormsReactProps) => {
-    const ctx = useJsonForms();
-    const { refResolver } = ctxToJsonFormsDispatchProps(ctx, props);
-    const { data, errors } = ctx.core;
-    useLayoutEffect(() => {
-      props.onChange && props.onChange({ data, errors });
-    }, [data, errors]);
+    const {
+      schema,
+      rootSchema,
+      uischema,
+      path,
+      enabled,
+      renderers,
+      cells,
+      config,
+    } = this.props as JsonFormsProps;
 
     return (
-      <JsonFormsDispatchRenderer
-        schema={props.schema || ctx.core.schema}
-        uischema={props.uischema || ctx.core.uischema}
-        path={props.path || ''}
-        enabled={props.enabled}
-        rootSchema={ctx.core.schema}
-        renderers={ctx.renderers}
-        refResolver={refResolver}
+      <TestAndRender
+        uischema={uischema}
+        schema={schema}
+        rootSchema={rootSchema}
+        path={path}
+        enabled={enabled}
+        renderers={renderers}
+        cells={cells}
+        id={this.state.id}
+        config={config}
       />
     );
   }
-);
+}
+
+const TestAndRender = React.memo(function TestAndRender(props: {
+  uischema: UISchemaElement;
+  schema: JsonSchema;
+  rootSchema: JsonSchema;
+  path: string;
+  enabled: boolean;
+  renderers: JsonFormsRendererRegistryEntry[];
+  cells: JsonFormsCellRendererRegistryEntry[];
+  id: string;
+  config: any;
+}) {
+  const testerContext = useMemo(
+    () => ({
+      rootSchema: props.rootSchema,
+      config: props.config,
+    }),
+    [props.rootSchema, props.config]
+  );
+  const renderer = useMemo(
+    () =>
+      maxBy(props.renderers, (r) =>
+        r.tester(props.uischema, props.schema, testerContext)
+      ),
+    [props.renderers, props.uischema, props.schema, testerContext]
+  );
+  if (
+    renderer === undefined ||
+    renderer.tester(props.uischema, props.schema, testerContext) === -1
+  ) {
+    return <UnknownRenderer type={'renderer'} />;
+  } else {
+    const Render = renderer.renderer;
+    return (
+      <Render
+        uischema={props.uischema}
+        schema={props.schema}
+        path={props.path}
+        enabled={props.enabled}
+        renderers={props.renderers}
+        cells={props.cells}
+        id={props.id}
+      />
+    );
+  }
+});
+
+/**
+ * @deprecated Since Version 3.0 this optimization renderer is no longer necessary.
+ * Use `JsonFormsDispatch` instead.
+ * We still export it for backward compatibility
+ */
+export class ResolvedJsonFormsDispatchRenderer extends JsonFormsDispatchRenderer {
+  constructor(props: JsonFormsProps) {
+    super(props);
+  }
+}
+
+export const JsonFormsDispatch: ComponentType<OwnPropsOfJsonFormsRenderer> =
+  withJsonFormsRendererProps(JsonFormsDispatchRenderer);
+
+/**
+ * @deprecated Since Version 3.0 this optimization component is no longer necessary.
+ * Use `JsonFormsDispatch` instead.
+ * We still export it for backward compatibility
+ */
+export const ResolvedJsonFormsDispatch: ComponentType<OwnPropsOfJsonFormsRenderer> =
+  withJsonFormsRendererProps(ResolvedJsonFormsDispatchRenderer);
 
 export interface JsonFormsInitStateProps {
   data: any;
@@ -203,8 +190,13 @@ export interface JsonFormsInitStateProps {
   uischema?: UISchemaElement;
   renderers: JsonFormsRendererRegistryEntry[];
   cells?: JsonFormsCellRendererRegistryEntry[];
-  ajv?: AJV.Ajv;
-  refParserOptions?: RefParser.Options;
+  ajv?: Ajv;
+  config?: any;
+  uischemas?: JsonFormsUISchemaRegistryEntry[];
+  readonly?: boolean;
+  validationMode?: ValidationMode;
+  i18n?: JsonFormsI18nState;
+  additionalErrors?: ErrorObject[];
 }
 
 export const JsonForms = (
@@ -217,27 +209,49 @@ export const JsonForms = (
     uischema,
     renderers,
     cells,
-    refParserOptions,
-    onChange
+    onChange,
+    config,
+    uischemas,
+    readonly,
+    validationMode,
+    i18n,
+    additionalErrors,
+    middleware,
   } = props;
-  const schemaToUse = schema !== undefined ? schema : Generate.jsonSchema(data);
-  const uischemaToUse =
-    typeof uischema === 'object' ? uischema : Generate.uiSchema(schemaToUse);
+  const schemaToUse = useMemo(
+    () => (schema !== undefined ? schema : Generate.jsonSchema(data)),
+    [schema, data]
+  );
+  const uischemaToUse = useMemo(
+    () =>
+      typeof uischema === 'object'
+        ? uischema
+        : Generate.uiSchema(schemaToUse, undefined, undefined, schemaToUse),
+    [uischema, schemaToUse]
+  );
+
   return (
     <JsonFormsStateProvider
       initState={{
         core: {
           ajv,
           data,
-          refParserOptions,
           schema: schemaToUse,
-          uischema: uischemaToUse
+          uischema: uischemaToUse,
+          validationMode: validationMode,
+          additionalErrors: additionalErrors,
         },
+        config,
+        uischemas,
         renderers,
-        cells
+        cells,
+        readonly,
+        i18n,
       }}
+      onChange={onChange}
+      middleware={middleware}
     >
-      <JsonFormsDispatch onChange={onChange} />
+      <JsonFormsDispatch />
     </JsonFormsStateProvider>
   );
 };
