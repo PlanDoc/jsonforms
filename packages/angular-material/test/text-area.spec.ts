@@ -22,44 +22,43 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux } from '@angular-redux/store';
-import { MockNgRedux } from '@angular-redux/store/testing';
 import { DebugElement } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  MatError,
-  MatFormFieldModule,
-  MatInputModule
-} from '@angular/material';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
   ErrorTestExpectation,
   TestData,
   textBaseTest,
   textErrorTest,
-  textInputEventTest
-} from '@jsonforms/angular-test';
+  textInputEventTest,
+} from './common';
 import { TextAreaRenderer, TextAreaRendererTester } from '../src';
 import { ControlElement, JsonSchema } from '@jsonforms/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { JsonFormsAngularService } from '@jsonforms/angular';
 
 describe('Material text field tester', () => {
   const uischema = {
     type: 'Control',
     scope: '#/properties/foo',
-    options: { multi: true }
+    options: { multi: true },
   };
 
   it('should succeed', () => {
     expect(
-      TextAreaRendererTester(uischema, {
-        type: 'object',
-        properties: {
-          foo: {
-            type: 'string'
-          }
-        }
-      })
+      TextAreaRendererTester(
+        uischema,
+        {
+          type: 'object',
+          properties: {
+            foo: {
+              type: 'string',
+            },
+          },
+        },
+        undefined
+      )
     ).toBe(2);
   });
 });
@@ -68,14 +67,13 @@ const imports = [
   MatInputModule,
   NoopAnimationsModule,
   ReactiveFormsModule,
-  FlexLayoutModule
 ];
-const providers = [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }];
+const providers = [JsonFormsAngularService];
 const componentUT: any = TextAreaRenderer;
 const errorTest: ErrorTestExpectation = {
   errorInstance: MatError,
   numberOfElements: 1,
-  indexOfElement: 0
+  indexOfElement: 0,
 };
 const toSelect = (el: DebugElement) => el.nativeElement;
 const testConfig = { imports, providers, componentUT };
@@ -84,19 +82,19 @@ const defaultSchema: JsonSchema = {
   type: 'object',
   properties: {
     foo: {
-      type: 'string'
-    }
-  }
+      type: 'string',
+    },
+  },
 };
 const defaultUischema: ControlElement = {
   type: 'Control',
   scope: '#/properties/foo',
-  options: { multi: true }
+  options: { multi: true },
 };
 const defaultTestData: TestData<ControlElement> = {
   data: defaultData,
   schema: defaultSchema,
-  uischema: defaultUischema
+  uischema: defaultUischema,
 };
 describe(
   'Text control Base Tests',

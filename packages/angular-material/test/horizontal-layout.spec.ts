@@ -22,71 +22,72 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { HorizontalLayout, UISchemaElement } from '@jsonforms/core';
-import { beforeEachLayoutTest, setupMockStore } from '@jsonforms/angular-test';
-import { Subject } from 'rxjs';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { initComponent } from '@jsonforms/angular-test';
+import { beforeEachLayoutTest, setupMockStore } from './common';
 import {
   HorizontalLayoutRenderer,
-  horizontalLayoutTester
-} from '../src/layouts/horizontal-layout.renderer';
+  horizontalLayoutTester,
+} from '../src/library/layouts/horizontal-layout.renderer';
+import { LayoutChildrenRenderPropsPipe } from '../src/library/layouts/layout.renderer';
 
 describe('Horizontal layout tester', () => {
   it('should succeed', () => {
     expect(
-      horizontalLayoutTester({ type: 'HorizontalLayout' }, undefined)
+      horizontalLayoutTester({ type: 'HorizontalLayout' }, undefined, undefined)
     ).toBe(1);
   });
 });
 describe('Horizontal layout', () => {
   let fixture: ComponentFixture<any>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = beforeEachLayoutTest(HorizontalLayoutRenderer, {
-      imports: [FlexLayoutModule]
+      declarations: [LayoutChildrenRenderPropsPipe],
     });
-  });
+  }));
 
   it('render with undefined elements', () => {
     const uischema: UISchemaElement = {
-      type: 'HorizontalLayout'
+      type: 'HorizontalLayout',
     };
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(0);
   });
 
   it('render with null elements', () => {
     const uischema: HorizontalLayout = {
       type: 'HorizontalLayout',
-      elements: null
+      elements: null,
     };
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(0);
   });
 
   it('render with children', () => {
     const uischema: HorizontalLayout = {
       type: 'HorizontalLayout',
-      elements: [{ type: 'Control' }, { type: 'Control' }]
+      elements: [{ type: 'Control' }, { type: 'Control' }],
     };
-    const mockSubStore: Subject<any> = setupMockStore(fixture, {
+    setupMockStore(fixture, {
       data: {},
       schema: {},
-      uischema
+      uischema,
     });
-    initComponent(fixture, mockSubStore);
+    fixture.componentInstance.ngOnInit();
+    fixture.detectChanges();
     expect(fixture.nativeElement.children[0].children.length).toBe(2);
     expect(fixture.nativeElement.children[0].hidden).toBe(false);
   });

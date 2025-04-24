@@ -22,33 +22,38 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux, NgReduxModule } from '@angular-redux/store';
-import { MockNgRedux } from '@angular-redux/store/lib/testing';
 import { CommonModule } from '@angular/common';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  MatCardModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatTableModule
-} from '@angular/material';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { JsonFormsModule } from '@jsonforms/angular';
+import { JsonFormsAngularService, JsonFormsModule } from '@jsonforms/angular';
 import { ControlElement } from '@jsonforms/core';
 import { TextControlRenderer, TextControlRendererTester } from '../src';
 import {
+  GetProps,
   TableRenderer,
-  TableRendererTester
-} from '../src/other/table.renderer';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { setupMockStore } from '@jsonforms/angular-test';
+  TableRendererTester,
+} from '../src/library/other/table.renderer';
+import { setupMockStore } from './common';
+import { createTesterContext } from './util';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const uischema1: ControlElement = { type: 'Control', scope: '#' };
 const uischema2: ControlElement = {
   type: 'Control',
-  scope: '#/properties/my'
+  scope: '#/properties/my',
+};
+const uischemaWithSorting: ControlElement = {
+  type: 'Control',
+  scope: '#',
+  options: {
+    showSortButtons: true,
+  },
 };
 const schema_object1 = {
   type: 'array',
@@ -56,9 +61,9 @@ const schema_object1 = {
     type: 'object',
     properties: {
       foo: { type: 'string' },
-      bar: { type: 'string' }
-    }
-  }
+      bar: { type: 'string' },
+    },
+  },
 };
 const schema_object2 = {
   type: 'object',
@@ -69,17 +74,17 @@ const schema_object2 = {
         type: 'object',
         properties: {
           foo: { type: 'string' },
-          bar: { type: 'string' }
-        }
-      }
-    }
-  }
+          bar: { type: 'string' },
+        },
+      },
+    },
+  },
 };
 const schema_simple1 = {
   type: 'array',
   items: {
-    type: 'string'
-  }
+    type: 'string',
+  },
 };
 const schema_simple2 = {
   type: 'object',
@@ -87,153 +92,165 @@ const schema_simple2 = {
     my: {
       type: 'array',
       items: {
-        type: 'string'
-      }
-    }
-  }
+        type: 'string',
+      },
+    },
+  },
 };
 const renderers = [
   { tester: TextControlRendererTester, renderer: TextControlRenderer },
-  { tester: TableRendererTester, renderer: TableRenderer }
+  { tester: TableRendererTester, renderer: TableRenderer },
 ];
 
 describe('Table tester', () => {
   it('should succeed', () => {
-    expect(TableRendererTester(uischema1, schema_object1)).toBe(3);
-    expect(TableRendererTester(uischema1, schema_simple1)).toBe(3);
-    expect(TableRendererTester(uischema2, schema_object2)).toBe(3);
-    expect(TableRendererTester(uischema2, schema_simple2)).toBe(3);
+    expect(
+      TableRendererTester(
+        uischema1,
+        schema_object1,
+        createTesterContext(schema_object1)
+      )
+    ).toBe(3);
+    expect(
+      TableRendererTester(
+        uischema1,
+        schema_simple1,
+        createTesterContext(schema_simple1)
+      )
+    ).toBe(3);
+    expect(
+      TableRendererTester(
+        uischema2,
+        schema_object2,
+        createTesterContext(schema_object2)
+      )
+    ).toBe(3);
+    expect(
+      TableRendererTester(
+        uischema2,
+        schema_simple2,
+        createTesterContext(schema_simple2)
+      )
+    ).toBe(3);
   });
 });
 describe('Table', () => {
   let fixture: ComponentFixture<any>;
   let component: any;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [TableRenderer, TextControlRenderer],
+      declarations: [TableRenderer, TextControlRenderer, GetProps],
       imports: [
         CommonModule,
         JsonFormsModule,
-        NgReduxModule,
         MatCardModule,
         NoopAnimationsModule,
         MatFormFieldModule,
+        MatIconModule,
         MatInputModule,
         ReactiveFormsModule,
-        FlexLayoutModule,
-        MatTableModule
+        MatTableModule,
+        MatTooltipModule,
       ],
-      providers: [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }]
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [TextControlRenderer]
-        }
-      })
-      .compileComponents();
+      providers: [JsonFormsAngularService],
+    }).compileComponents();
 
-    MockNgRedux.reset();
     fixture = TestBed.createComponent(TableRenderer);
     component = fixture.componentInstance;
   }));
 
-  it('renders object array on root', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('renders object array on root', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema1,
       schema: schema_object1,
       data: [
         { foo: 'foo_1', bar: 'bar_1' },
-        { foo: 'foo_2', bar: 'bar_2' }
+        { foo: 'foo_2', bar: 'bar_2' },
       ],
-      renderers
+      renderers,
     });
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
       // 2 columns
-      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(2);
+      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(3);
       // 1 head row and 2 data rows
       expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 2);
       // 4 data entries
-      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(4);
+      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(6);
     });
   }));
-  it('renders object array on path', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('renders object array on path', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema2,
       schema: schema_object2,
       data: {
         my: [
           { foo: 'foo_1', bar: 'bar_1' },
-          { foo: 'foo_2', bar: 'bar_2' }
-        ]
+          { foo: 'foo_2', bar: 'bar_2' },
+        ],
       },
-      renderers
+      renderers,
     });
 
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
       // 2 columns
-      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(2);
+      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(3);
       // 1 head row and 2 data rows
       expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 2);
       // 4 data entries
-      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(4);
+      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(6);
     });
   }));
 
-  it('renders simple array on root', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('renders simple array on root', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema1,
       schema: schema_simple1,
       data: ['foo', 'bar'],
-      renderers
+      renderers,
     });
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
       // 1 column
-      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(1);
+      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(2);
       // 1 head row and 2 data rows
       expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 2);
       // 2 data entries
-      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(2);
+      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(4);
     });
   }));
-  it('renders simple array on path', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('renders simple array on path', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema2,
       schema: schema_simple2,
       data: { my: ['foo', 'bar'] },
-      renderers
+      renderers,
     });
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
       // 1 columns
-      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(1);
+      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(2);
       // 1 head row and 2 data rows
       expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 2);
       // 2 data entries
-      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(2);
+      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(4);
     });
   }));
 
-  it('can be disabled', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('can be disabled', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema1,
       schema: schema_object1,
       data: [{ foo: 'foo_1', bar: 'bar_1' }],
-      renderers
+      renderers,
     });
     component.disabled = true;
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
@@ -246,19 +263,126 @@ describe('Table', () => {
       ).toBeTruthy();
     });
   }));
-  it('should be enabled by default', async(() => {
-    const mockSubStore = setupMockStore(fixture, {
+  it('should be enabled by default', waitForAsync(() => {
+    setupMockStore(fixture, {
       uischema: uischema1,
       schema: schema_object1,
       data: [{ foo: 'foo_1', bar: 'bar_1' }],
-      renderers
+      renderers,
     });
-    mockSubStore.complete();
     fixture.detectChanges();
     component.ngOnInit();
     fixture.whenStable().then(() => {
+      component.add();
       expect(fixture.nativeElement.querySelectorAll('input').length).toBe(2);
       expect(fixture.nativeElement.querySelector('input').disabled).toBeFalsy();
+    });
+  }));
+
+  it('renderer handles removing of rows', waitForAsync(() => {
+    setupMockStore(fixture, {
+      uischema: uischema1,
+      schema: schema_object1,
+      data: [
+        { foo: 'foo_1', bar: 'bar_1' },
+        { foo: 'foo_2', bar: 'bar_2' },
+      ],
+      renderers,
+    });
+
+    fixture.detectChanges();
+    component.ngOnInit();
+    component.remove(0);
+    component.remove(0);
+    fixture.detectChanges();
+
+    fixture.whenStable().then(() => {
+      // 1 row
+      expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 0);
+    });
+  }));
+
+  it('renderer handles adding of rows', waitForAsync(() => {
+    setupMockStore(fixture, {
+      uischema: uischema1,
+      schema: schema_object1,
+      data: [
+        { foo: 'foo_1', bar: 'bar_1' },
+        { foo: 'foo_2', bar: 'bar_2' },
+      ],
+      renderers,
+    });
+
+    fixture.detectChanges();
+    component.ngOnInit();
+
+    component.add();
+    component.add();
+    fixture.detectChanges();
+
+    fixture.whenStable().then(() => {
+      // 3 row
+      expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 4);
+    });
+  }));
+
+  it('when disabled doesnt render `add` nor `remove` icons', waitForAsync(() => {
+    setupMockStore(fixture, {
+      uischema: uischema1,
+      schema: schema_object1,
+      data: [
+        { foo: 'foo_1', bar: 'bar_1' },
+        { foo: 'foo_2', bar: 'bar_2' },
+      ],
+      renderers,
+    });
+    component.disabled = true;
+    fixture.detectChanges();
+
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      // 2 columns
+      expect(fixture.nativeElement.querySelectorAll('th').length).toBe(2);
+      // 2 rows
+      expect(fixture.nativeElement.querySelectorAll('tr').length).toBe(1 + 2);
+      // 2 data entries
+      expect(fixture.nativeElement.querySelectorAll('td').length).toBe(4);
+    });
+  }));
+  it('when options.showSortButtons is True, it should render sort buttons', waitForAsync(() => {
+    setupMockStore(fixture, {
+      uischema: uischemaWithSorting,
+      schema: schema_simple1,
+      data: ['foo', 'bar'],
+      renderers,
+    });
+    component.disabled = false;
+    fixture.detectChanges();
+
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      expect(fixture.nativeElement.querySelectorAll('.item-up').length).toBe(2);
+      expect(fixture.nativeElement.querySelectorAll('.item-down').length).toBe(
+        2
+      );
+    });
+  }));
+  it('when options.showSortButtons is False, it should NOT render sort buttons', waitForAsync(() => {
+    setupMockStore(fixture, {
+      uischema: uischema1,
+      schema: schema_simple1,
+      data: ['foo', 'bar'],
+      renderers,
+    });
+    component.disabled = false;
+    fixture.detectChanges();
+
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      expect(fixture.nativeElement.querySelectorAll('.item-up').length).toBe(0);
+      expect(fixture.nativeElement.querySelectorAll('.item-down').length).toBe(
+        0
+      );
     });
   }));
 });

@@ -1,21 +1,34 @@
-# JSONForms - More Forms. Less Code
-### Complex Forms in the blink of an eye
+# JSON Forms - More Forms. Less Code
 
-JSONForms uses HTML custom elements and eliminates the need to write HTML templates in order to create forms by leveraging the capabilities of JSON and JSON schema.
+_Complex forms in the blink of an eye_
 
-# Examples Package
-This is the examples package which demonstrates how to integrate JSONForms with your application.
+JSON Forms eliminates the tedious task of writing fully-featured forms by hand by leveraging the capabilities of JSON, JSON Schema and Javascript.
 
-You can use the examples with any react-based renderer set you want, for example the [Material Renderers](https://www.npmjs.com/package/@jsonforms/material-renderers) or the [Vanilla Renderers](https://www.npmjs.com/package/@jsonforms/vanilla-renderers).
+## Examples Package
 
-Check https://www.npmjs.com/search?q=%40jsonforms for all published JSONForms packages.
+This is the examples package which demonstrates how to integrate JSON Forms with your application.
 
-# License
-The JSONForms project is licensed under the MIT License. See the [LICENSE file](https://github.com/eclipsesource/jsonforms/blob/master/LICENSE) for more information.
+You can use the examples with any renderer set you want, for example the [Material Renderers](https://github.com/eclipsesource/jsonforms/tree/master/packages/material-renderers) or the [Angular Renderers](https://github.com/eclipsesource/jsonforms/tree/master/packages/angular-material).
 
-# Roadmap
+Check <https://www.npmjs.com/search?q=%40jsonforms> for all published JSON Forms packages.
+
+## License
+
+The JSON Forms project is licensed under the MIT License. See the [LICENSE file](https://github.com/eclipsesource/jsonforms/blob/master/LICENSE) for more information.
+
+## Roadmap
+
 Our current roadmap is available [here](https://github.com/eclipsesource/jsonforms/blob/master/ROADMAP.md).
 
-# Development
-JSONForms is developed by [EclipseSource](https://eclipsesource.com).
-We are always very happy to have contributions, whether for trivial cleanups or big new features.
+## Feedback, Help and Support
+
+JSON Forms is developed by [EclipseSource](https://eclipsesource.com).
+
+If you encounter any problems feel free to [open an issue](https://github.com/eclipsesource/jsonforms/issues/new/choose) on the repo.
+For questions and discussions please use the [JSON Forms board](https://jsonforms.discourse.group).
+You can also reach us via [email](mailto:jsonforms@eclipsesource.com?subject=JSON%20Forms).
+In addition, EclipseSource also offers [professional support](https://jsonforms.io/support) for JSON Forms.
+
+## Migration
+
+See our [migration guide](https://github.com/eclipsesource/jsonforms/blob/master/MIGRATION.md) when updating JSON Forms.

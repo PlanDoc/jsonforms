@@ -22,65 +22,61 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { SET_LOCALE, SET_LOCALIZED_SCHEMAS } from '../actions';
-import { JsonSchema, SET_LOCALIZED_UISCHEMAS, UISchemaElement } from '..';
 
-export interface JsonFormsLocaleState {
-  locale?: string;
-  localizedSchemas: Map<string, JsonSchema>;
-  localizedUISchemas: Map<string, UISchemaElement>;
-}
+import { defaultErrorTranslator, defaultTranslator } from '../i18n';
+import {
+  I18nActions,
+  SET_LOCALE,
+  SET_TRANSLATOR,
+  UPDATE_I18N,
+} from '../actions';
+import { Reducer } from '../store/type';
+import { JsonFormsI18nState } from '../store';
 
-const initState: JsonFormsLocaleState = {
-  locale: undefined,
-  localizedSchemas: new Map(),
-  localizedUISchemas: new Map()
+export const defaultJsonFormsI18nState: Required<JsonFormsI18nState> = {
+  locale: 'en',
+  translate: defaultTranslator,
+  translateError: defaultErrorTranslator,
 };
 
-export const i18nReducer = (state = initState, action: any) => {
+export const i18nReducer: Reducer<JsonFormsI18nState, I18nActions> = (
+  state = defaultJsonFormsI18nState,
+  action
+) => {
   switch (action.type) {
-    case SET_LOCALIZED_SCHEMAS:
+    case UPDATE_I18N: {
+      const locale = action.locale ?? defaultJsonFormsI18nState.locale;
+      const translate =
+        action.translator ?? defaultJsonFormsI18nState.translate;
+      const translateError =
+        action.errorTranslator ?? defaultJsonFormsI18nState.translateError;
+
+      if (
+        locale !== state.locale ||
+        translate !== state.translate ||
+        translateError !== state.translateError
+      ) {
+        return {
+          ...state,
+          locale,
+          translate,
+          translateError,
+        };
+      }
+      return state;
+    }
+    case SET_TRANSLATOR:
       return {
         ...state,
-        localizedSchemas: action.localizedSchemas
-      };
-    case SET_LOCALIZED_UISCHEMAS:
-      return {
-        ...state,
-        localizedUISchemas: action.localizedUISchemas
+        translate: action.translator ?? defaultTranslator,
+        translateError: action.errorTranslator ?? defaultErrorTranslator,
       };
     case SET_LOCALE:
       return {
         ...state,
-        locale:
-          action.locale === undefined ? navigator.languages[0] : action.locale
+        locale: action.locale ?? navigator.languages[0],
       };
     default:
       return state;
   }
-};
-
-export const fetchLocale = (state?: JsonFormsLocaleState) => {
-  if (state === undefined) {
-    return undefined;
-  }
-  return state.locale;
-};
-
-export const findLocalizedSchema = (locale: string) => (
-  state?: JsonFormsLocaleState
-): JsonSchema => {
-  if (state === undefined) {
-    return undefined;
-  }
-  return state.localizedSchemas.get(locale);
-};
-
-export const findLocalizedUISchema = (locale: string) => (
-  state?: JsonFormsLocaleState
-): UISchemaElement => {
-  if (state === undefined) {
-    return undefined;
-  }
-  return state.localizedUISchemas.get(locale);
 };

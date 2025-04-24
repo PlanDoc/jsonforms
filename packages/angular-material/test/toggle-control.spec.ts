@@ -22,50 +22,51 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux } from '@angular-redux/store';
-import { MockNgRedux } from '@angular-redux/store/testing';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import {
-  MatError,
-  MatFormFieldModule,
   MatSlideToggle,
-  MatSlideToggleModule
-} from '@angular/material';
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
 import {
   booleanBaseTest,
   booleanErrorTest,
   booleanInputEventTest,
-  ErrorTestExpectation
-} from '@jsonforms/angular-test';
+  ErrorTestExpectation,
+} from './common';
 import { ToggleControlRenderer, ToggleControlRendererTester } from '../src';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { JsonFormsAngularService } from '@jsonforms/angular';
 
 describe('Material boolean field tester', () => {
   const uischema = {
     type: 'Control',
     scope: '#/properties/foo',
-    options: { toggle: true }
+    options: { toggle: true },
   };
 
   it('should succeed', () => {
     expect(
-      ToggleControlRendererTester(uischema, {
-        type: 'object',
-        properties: {
-          foo: {
-            type: 'boolean'
-          }
-        }
-      })
+      ToggleControlRendererTester(
+        uischema,
+        {
+          type: 'object',
+          properties: {
+            foo: {
+              type: 'boolean',
+            },
+          },
+        },
+        undefined
+      )
     ).toBe(3);
   });
 });
-const imports = [MatSlideToggleModule, MatFormFieldModule, FlexLayoutModule];
-const providers = [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }];
+const imports = [MatSlideToggleModule, MatFormFieldModule];
+const providers = [JsonFormsAngularService];
 const componentUT: any = ToggleControlRenderer;
 const errorTest: ErrorTestExpectation = {
   errorInstance: MatError,
   numberOfElements: 1,
-  indexOfElement: 0
+  indexOfElement: 0,
 };
 const testConfig = { imports, providers, componentUT };
 describe(

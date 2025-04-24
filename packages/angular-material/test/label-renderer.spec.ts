@@ -22,49 +22,46 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-import { NgRedux } from '@angular-redux/store';
-import { MockNgRedux } from '@angular-redux/store/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { JsonSchema, LabelElement } from '@jsonforms/core';
 
-import { LabelRenderer, LabelRendererTester } from '../src/other';
-import { setupMockStore } from '@jsonforms/angular-test';
+import { LabelRenderer, LabelRendererTester } from '../src/library/other';
+import { setupMockStore } from './common';
+import { JsonFormsAngularService } from '@jsonforms/angular';
 
 const data = {};
 const schema: JsonSchema = {
   type: 'object',
   properties: {
     foo: {
-      type: 'string'
-    }
-  }
+      type: 'string',
+    },
+  },
 };
 const uischema: LabelElement = {
   type: 'Label',
-  text: 'FooBar'
+  text: 'FooBar',
 };
 
 describe('Material label field tester', () => {
   it('should succeed', () => {
-    expect(LabelRendererTester(uischema, schema)).toBe(4);
+    expect(LabelRendererTester(uischema, schema, undefined)).toBe(4);
   });
 });
-const providers = [{ provide: NgRedux, useFactory: MockNgRedux.getInstance }];
+const providers = [JsonFormsAngularService];
 const componentUT: any = LabelRenderer;
 
 describe('Label Renderer Base Tests', () => {
   let fixture: ComponentFixture<LabelRenderer>;
   let component: LabelRenderer;
   let labelElement: HTMLLabelElement;
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [componentUT],
-      providers: providers
+      providers: providers,
     }).compileComponents();
-
-    MockNgRedux.reset();
-  });
+  }));
   beforeEach(() => {
     fixture = TestBed.createComponent(componentUT);
     component = fixture.componentInstance;
@@ -73,8 +70,7 @@ describe('Label Renderer Base Tests', () => {
   });
 
   it('should render', () => {
-    const mockSubStore = setupMockStore(fixture, { uischema, schema, data });
-    mockSubStore.complete();
+    setupMockStore(fixture, { uischema, schema, data });
     fixture.detectChanges();
     component.ngOnInit();
     expect(labelElement.innerText.trim()).toBe('FooBar');

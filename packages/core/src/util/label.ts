@@ -22,10 +22,11 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
+
 import startCase from 'lodash/startCase';
 
-import { ControlElement, LabelDescription } from '../models/uischema';
-import { JsonSchema } from '../models/jsonSchema';
+import { ControlElement, JsonSchema, LabelDescription } from '../models';
+import { decode } from './path';
 
 const deriveLabel = (
   controlElement: ControlElement,
@@ -36,8 +37,7 @@ const deriveLabel = (
   }
   if (typeof controlElement.scope === 'string') {
     const ref = controlElement.scope;
-    const label = ref.substr(ref.lastIndexOf('/') + 1);
-
+    const label = decode(ref.substr(ref.lastIndexOf('/') + 1));
     return startCase(label);
   }
 
@@ -79,5 +79,5 @@ export const createLabelDescriptionFrom = (
 
 const labelDescription = (text: string, show: boolean): LabelDescription => ({
   text: text,
-  show: show
+  show: show,
 });
